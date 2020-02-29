@@ -1,0 +1,407 @@
+%
+%   Copyright 2020 Amir Kantor
+%
+%   Licensed under the Apache License, Version 2.0 (the "License");
+%   you may not use this file except in compliance with the License.
+%   You may obtain a copy of the License at
+%
+%       http://www.apache.org/licenses/LICENSE-2.0
+%
+%   Unless required by applicable law or agreed to in writing, software
+%   distributed under the License is distributed on an "AS IS" BASIS,
+%   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%   See the License for the specific language governing permissions and
+%   limitations under the License.
+%
+
+% ___File name:___ fol-3.hn
+
+% ___File purpose:___ A Horn knowledge base defining a FOL theory including 
+% a subset of the 'non-logical' constants (i.e., a subset of the 'universal' 
+% language) and axioms, and the proper way to extend theories with theorems
+% and definitions, in case of a *finite* number of axioms (mathematical 
+% expositions of 'type I').
+
+% Horn Knowledge Base
+% ========//=========
+
+% Preliminaries
+% -------------
+
+:- ensure_loaded('/app/mai/src/horn/fol-2.hn').
+
+:- style_check(-singleton).
+
+% Setting
+% =======
+
+% Non-Logical Constants
+% ---------------------
+
+constant(Fu) :-
+	function(Fu).
+constant(P) :-
+	predicate(P).
+
+nonequal_constants(Fu, P) :-
+	function(Fu),
+	predicate(P).
+nonequal_constants(Fu, Fu1) :-
+	%function(Fu),
+	%function(Fu1),
+	nonequal_functions(Fu, Fu1).
+nonequal_constants(P, Fu) :-
+	predicate(P),
+	function(Fu).
+nonequal_constants(P, P1) :-
+	%predicate(P),
+	%predicate(P1),
+	nonequal_predicates(P, P1).
+
+% Non-Logical Constants with Arity
+% --------------------------------
+
+nonequal_constants_arity(C1, N1, C2, N2) :-
+	%constant(C1),
+	natural(N1),
+	%constant(C2),
+	natural(N2),
+	nonequal_constants(C1, C2).
+nonequal_constants_arity(C, N1, C, N2) :-
+	constant(C),
+	%natural(N1),
+	%natural(N2),
+	nonequal_naturals(N1, N2).
+
+distinct_constant_arity_list(empty_distinct_constant_arity_list).
+distinct_constant_arity_list(append_constant_arity_distinct_constant_arity_list(Cs,C,N)) :-
+	%distinct_constant_arity_list(Cs),
+	%constant(C),
+	%natural(N),
+	not_member_of_distinct_constant_arity_list(C, N, Cs).
+%
+not_member_of_distinct_constant_arity_list(C1, N1, 
+                                         empty_distinct_constant_arity_list) :-
+	constant(C1),
+	natural(N1).
+% NOTE The following definition seems very inefficient due to the *two*
+% recursive calls (they overlap, as both essentially check that `Cs` is a valid
+% distinct constant arity list).
+% It seems to be exponential in the size of the list (?).
+% TODO Try to improve.
+not_member_of_distinct_constant_arity_list(C1, N1, 
+                 append_constant_arity_distinct_constant_arity_list(Cs,C,N)) :-
+	%distinct_constant_arity_list(Cs),
+	%constant(C),
+	%natural(N),
+	not_member_of_distinct_constant_arity_list(C, N, Cs),
+	%constant(C1),
+	%natural(N1),
+	not_member_of_distinct_constant_arity_list(C1, N1, Cs),
+	nonequal_constants_arity(C1, N1, C, N).
+
+member_of_distinct_constant_arity_list(C, N,
+                 append_constant_arity_distinct_constant_arity_list(Cs,C,N)) :-
+	%distinct_constant_arity_list(Cs),
+	%constant(C),
+	%natural(N),
+	not_member_of_distinct_constant_arity_list(C, N, Cs).
+% NOTE The following definition seems very inefficient due to the *two*
+% recursive calls (they overlap, as both essentially check that `Cs` is a valid
+% distinct constant arity list).
+% It seems to be exponential in the size of the list (?).
+% TODO Try to improve.
+member_of_distinct_constant_arity_list(C1, N1,
+                 append_constant_arity_distinct_constant_arity_list(Cs,C,N)) :-
+	%distinct_constant_arity_list(Cs),
+	%constant(C),
+	%natural(N),
+	not_member_of_distinct_constant_arity_list(C, N, Cs),
+	%constant(C1),
+	%natural(N1),
+	member_of_distinct_constant_arity_list(C1, N1, Cs).
+
+% Terms for Signature
+% -------------------
+
+term_for(variable_term(V), Cs) :-
+    distinct_constant_arity_list(Cs),
+    variable(V).
+term_for(function_term(Fu,Ts), Cs) :-
+    %distinct_constant_arity_list(Cs),
+    function(Fu),
+    %natural(N),
+    member_of_distinct_constant_arity_list(Fu, N, Cs),
+    %term_list(Ts),
+    term_list_for(Ts, Cs),
+    length_of_term_list_is(Ts, N).
+%
+term_list_for(empty_term_list, Cs) :-
+    distinct_constant_arity_list(Cs).
+term_list_for(append_term_term_list(Ts,T), Cs) :-
+    %distinct_constant_arity_list(Cs),
+    %term_list(Ts),
+    term_list_for(Ts, Cs),
+    %term(T),
+    term_for(T, Cs).
+
+% Formulae for Signature
+% ----------------------
+
+formula_for(false_formula, Cs) :-
+    distinct_constant_arity_list(Cs).
+formula_for(true_formula, Cs) :-
+    distinct_constant_arity_list(Cs).
+formula_for(equals_formula(T1,T2), Cs) :-
+    %distinct_constant_arity_list(Cs),
+    %term(T1),
+    term_for(T1, Cs),
+    %term(T2),
+    term_for(T2, Cs).
+formula_for(predicate_formula(P,Ts), Cs) :-
+    %distinct_constant_arity_list(Cs),
+    predicate(P),
+    %natural(N),
+    member_of_distinct_constant_arity_list(P, N, Cs),
+    %term_list(Ts),
+    term_list_for(Ts, Cs),
+    length_of_term_list_is(Ts, N).
+formula_for(not_formula(F), Cs) :-
+    %distinct_constant_arity_list(Cs),
+    %formula(F),
+    formula_for(F, Cs).
+formula_for(and_formula(F1,F2), Cs) :-
+    %distinct_constant_arity_list(Cs),
+    %formula(F1),
+    formula_for(F1, Cs),
+    %formula(F2),
+    formula_for(F2, Cs).
+formula_for(or_formula(F1,F2), Cs) :-
+    %distinct_constant_arity_list(Cs),
+    %formula(F1),
+    formula_for(F1, Cs),
+    %formula(F2),
+    formula_for(F2, Cs).
+formula_for(implies_formula(F1,F2), Cs) :-
+    %distinct_constant_arity_list(Cs),
+    %formula(F1),
+    formula_for(F1, Cs),
+    %formula(F2),
+    formula_for(F2, Cs).
+formula_for(iff_formula(F1,F2), Cs) :-
+    %distinct_constant_arity_list(Cs),
+    %formula(F1),
+    formula_for(F1, Cs),
+    %formula(F2),
+    formula_for(F2, Cs).
+formula_for(forall_formula(V,F), Cs) :-
+    %distinct_constant_arity_list(Cs),
+    variable(V),
+    %formula(F),
+    formula_for(F, Cs).
+formula_for(exists_formula(V,F), Cs) :-
+    %distinct_constant_arity_list(Cs),
+    variable(V),
+    %formula(F),
+    formula_for(F, Cs).
+
+formula_list_for(empty_formula_list, Cs) :-
+    distinct_constant_arity_list(Cs).
+formula_list_for(append_formula_formula_list(Fs,F), Cs) :-
+    %distinct_constant_arity_list(Cs),
+    %formula_list(Fs),
+    formula_list_for(Fs, Cs),
+    %formula(F),
+    formula_for(F, Cs).
+
+% Theories
+% --------
+
+theory(form_theory(Cs,Fs)) :-
+    %distinct_constant_arity_list(Cs),
+    %formula_list(Fs),
+    formula_list_for(Fs, Cs).
+
+% Mathematical Expositions -- Type I -- Finite Number of Axioms
+% =============================================================
+
+% Steps
+% -----
+
+% Declaration of a (non-logical) constant:
+constant_declaration_yields(form_theory(Cs,Fs), C, N,
+ form_theory(append_constant_arity_distinct_constant_arity_list(Cs,C,N),Fs)) :-
+    %distinct_constant_arity_list(Cs),
+    %formula_list(Fs),
+    formula_list_for(Fs, Cs),
+    %constant(C),
+    %natural(N),
+    not_member_of_distinct_constant_arity_list(C, N, Cs).
+
+% Declaration of an axiom:
+axiom_declaration_yields(form_theory(Cs,Fs), F,
+                          form_theory(Cs,append_formula_formula_list(Fs,F))) :-
+    %distinct_constant_arity_list(Cs),
+    %formula_list(Fs),
+    formula_list_for(Fs, Cs),
+    %formula(F),
+    formula_for(F, Cs).
+
+% Inclusion of a theorem:
+theorem_inclusion_yields(form_theory(Cs,Fs), F,
+                          form_theory(Cs,append_formula_formula_list(Fs,F))) :-
+    %distinct_constant_arity_list(Cs),
+    %formula_list(Fs),
+    formula_list_for(Fs, Cs),
+    %formula(F),
+    formula_for(F, Cs),
+    contextually_true(Fs, F).
+
+% Definition of a predicate:
+predicate_definition_yields(form_theory(Cs,Fs), F, Vs, N, P, VsAsTs, D,
+ form_theory(append_constant_arity_distinct_constant_arity_list(Cs,P,N),append_formula_formula_list(Fs,D))) :-
+    %distinct_constant_arity_list(Cs),
+    %formula_list(Fs),
+    formula_list_for(Fs, Cs),
+    %formula(F),
+    formula_for(F, Cs),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    length_of_distinct_variable_list_is(Vs, N),
+    predicate(P),
+    not_member_of_distinct_constant_arity_list(P, N, Cs),
+    %term_list(VsAsTs),
+    distinct_variable_list_as_term_list_is(Vs, VsAsTs),
+    %formula(D),
+    universally_quantified_formula_is(Vs, 
+                                iff_formula(predicate_formula(P,VsAsTs),F), D).
+
+% Definition of a function:
+function_definition_yields(form_theory(Cs,Fs), F, Vs, N, V, V1, F1, F2, Fu, 
+                           VsAsTs, F3, D, 
+ form_theory(append_constant_arity_distinct_constant_arity_list(Cs,Fu,N),append_formula_formula_list(Fs,D))) :-
+    %distinct_constant_arity_list(Cs),
+    %formula_list(Fs),
+    formula_list_for(Fs, Cs),
+    %formula(F),
+    formula_for(F, Cs),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    length_of_distinct_variable_list_is(Vs, N),
+    %variable(V),
+    not_member_of_distinct_variable_list(V, Vs),
+    %variable(V1),
+    %formula(F1),
+    exists_one_formula_is(V, F, V1, F1),
+    %formula(F2),
+    universally_quantified_formula_is(Vs, F1, F2),
+    contextually_true(Fs, F2),
+    function(Fu),
+    not_member_of_distinct_constant_arity_list(Fu, N, Cs),
+    %term_list(VsAsTs),
+    distinct_variable_list_as_term_list_is(Vs, VsAsTs),
+    %formula(F3),
+    substituted_in_formula(F, V, function_term(Fu,VsAsTs), F3),
+    %formula(D),
+    universally_quantified_formula_is(Vs, F3, D).
+
+% Definition of a function -- 2nd form:
+function_definition_second_form_yields(form_theory(Cs,Fs), T, Vs, N, Fu,
+                                       VsAsTs, D,
+ form_theory(append_constant_arity_distinct_constant_arity_list(Cs,Fu,N),append_formula_formula_list(Fs,D))) :-
+    %distinct_constant_arity_list(Cs),
+    %formula_list(Fs),
+    formula_list_for(Fs, Cs),
+    %term(T),
+    term_for(T, Cs),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    length_of_distinct_variable_list_is(Vs, N),
+    function(Fu),
+    not_member_of_distinct_constant_arity_list(Fu, N, Cs),
+    %term_list(VsAsTs),
+    distinct_variable_list_as_term_list_is(Vs, VsAsTs),
+    %formula(D),
+    universally_quantified_formula_is(Vs, 
+                                equals_formula(function_term(Fu,VsAsTs),T), D).
+
+% Whole
+% -----
+
+% Valid extensions:
+valid_extension(Th, Th) :-
+    theory(Th).
+valid_extension(Th, Th2) :-
+    %theory(Th),
+    %theory(Th1),
+    valid_extension(Th, Th1),
+    %formula(F),
+    %theory(Th2),
+    theorem_inclusion_yields(Th1, F, Th2).
+valid_extension(Th, Th2) :-
+    %theory(Th),
+    %theory(Th1),
+    valid_extension(Th, Th1),
+    %formula(F),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    %predicate(P),
+    %term_list(VsAsTs),
+    %formula(D),
+    %theory(Th2),
+    predicate_definition_yields(Th1, F, Vs, N, P, VsAsTs, D, Th2).
+valid_extension(Th, Th2) :-
+    %theory(Th),
+    %theory(Th1),
+    valid_extension(Th, Th1),
+    %formula(F),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    %variable(V),
+    %vairable(V1),
+    %formula(F1),
+    %formula(F2),
+    %function(Fu),
+    %term_list(VsAsTs),
+    %formula(F3),
+    %formula(D),
+    %theory(Th2),
+    function_definition_yields(Th1, F, Vs, N, V, V1, F1, F2, Fu, VsAsTs, F3, D,
+                               Th2).
+valid_extension(Th, Th2) :-
+    %theory(Th),
+    %theory(Th1),
+    valid_extension(Th, Th1),
+    %term(T),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    %function(Fu),
+    %term_list(VsAsTs),
+    %formula(D),
+    %theory(Th2),
+    function_definition_second_form_yields(Th1, T, Vs, N, Fu, VsAsTs, D, Th2).
+% NOTE Here and anywhere, we don't make use of `constant_declaration_yields/4`
+% and `axiom_declaration_yields/3`.
+
+% Comments
+% ========
+
+% TODO Knowledge base is not sufficiently tested. Verify again that the above 
+% follows from the admissible rules
+% in `fol-2.hn`, and consider perhaps adding more specific admissible rules
+% corresponding directly to the discussion above (not sure that it is needed).
+
+% TODO Verify that in ZFC, we obtain the appropriate meta-theorems allowing 
+% to extend the axioms schemes that are
+% originally formulated in terms of the primitive language, to any FOL theory
+% extending the primitive theory while satisfying the eliminability condition.
+
+% TODO Change the terminology "X for a signature / distinct constant arity 
+% list".
+
+% TODO Change metavariables `Cs` (or similar) for 
+% `distinct_constant_arity_list/1` into `CAs` (or similar).
+
+% NOTE The discussion above is based on contextually_true/2 type of entailment
+% (w.r.t a model and an assignment) and supports for general formulae (not 
+% necessarily closed).

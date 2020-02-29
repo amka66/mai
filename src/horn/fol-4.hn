@@ -1,0 +1,298 @@
+%
+%   Copyright 2020 Amir Kantor
+%
+%   Licensed under the Apache License, Version 2.0 (the "License");
+%   you may not use this file except in compliance with the License.
+%   You may obtain a copy of the License at
+%
+%       http://www.apache.org/licenses/LICENSE-2.0
+%
+%   Unless required by applicable law or agreed to in writing, software
+%   distributed under the License is distributed on an "AS IS" BASIS,
+%   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%   See the License for the specific language governing permissions and
+%   limitations under the License.
+%
+
+% ___File name:___ fol-4.hn
+
+% ___File purpose:___ A Horn knowledge base defining the proper way to extend
+% FOL theories with theorems and definitions, in case of a possibly *infinite*
+% number of axioms (mathematical expositions of 'type II').
+
+% Horn Knowledge Base
+% ========//=========
+
+% Preliminaries
+% -------------
+
+:- ensure_loaded('/app/mai/src/horn/fol-3.hn').
+
+:- style_check(-singleton).
+
+% Setting
+% =======
+
+% Primitives Configuration
+% ------------------------
+
+% TODO Add the following predicate under the assertions mentioned:
+%primitive_distinct_constant_arity_list( ...1... ).
+% Assertion (1): ...1... satisfies `distinct_constant_arity_list( ...1... )`.
+% Assertion (2): there is exactly one primitive distinct constant arity list.
+
+primitive_theory(form_theory(Cs,empty_formula_list)) :-
+    distinct_constant_arity_list(Cs),
+    primitive_distinct_constant_arity_list(Cs).
+
+primitive_formula(F) :-
+    %distinct_constant_arity_list(Cs),
+    primitive_distinct_constant_arity_list(Cs),
+    %formula(F),
+    formula_for(F, Cs).
+
+% TODO Add the following predicate under the assertion mentioned:
+%primitive_axiom/1.
+% Assertion: any ...2... such that `primitive_axiom( ...2... )` must satisfy
+% `primitive_formula( ...2... )`.
+% NOTE There may be many, even infinitely many, primitive axioms.
+
+% Primitive Axiom Lists
+% ---------------------
+
+primitive_axiom_list(empty_formula_list).
+primitive_axiom_list(append_formula_formula_list(Fs,F)) :-
+    %formula_list(Fs),
+    primitive_axiom_list(Fs),
+    %formula(F),
+    primitive_axiom(F),
+    primitive_formula(F).
+
+% Contextually True with Axioms
+% -----------------------------
+
+contextually_true_with_axioms(Fs, F) :-
+    %formula_list(Fs),
+    %formula(F),
+    %formula_list(As),
+    primitive_axiom_list(As),
+    %formula_list(Fs1),
+    concatenated_formula_lists(As, Fs, Fs1),
+    contextually_true(Fs1, F).
+% NOTE `Fs` and `F` are *not* restricted under a certain signature.
+
+% Distinct Constant Arity Lists Extending the Primitive One
+% ---------------------------------------------------------
+ 
+distinct_constant_arity_list_extending_primitive(Cs) :-
+    distinct_constant_arity_list(Cs),
+    primitive_distinct_constant_arity_list(Cs).
+distinct_constant_arity_list_extending_primitive(append_constant_arity_distinct_constant_arity_list(Cs,C,N)) :-
+    %distinct_constant_arity_list(Cs),
+    distinct_constant_arity_list_extending_primitive(Cs),
+    %constant(C),
+    %natural(N),
+    not_member_of_distinct_constant_arity_list(C, N, Cs).
+
+% Theories Extending the Primitive One
+% ------------------------------------
+
+theory_extending_primitive(form_theory(Cs,Fs)) :-
+    %distinct_constant_arity_list(Cs),
+    distinct_constant_arity_list_extending_primitive(Cs),
+    %formula_list(Fs),
+    formula_list_for(Fs, Cs).
+% NOTE Such theories do *not* include the axioms, and they not necessarily 
+% form a valid extension as defined below.
+
+% Mathematical Expositions -- Type II -- Infinite Number of Axioms
+% ================================================================
+
+% Steps
+% -----
+
+% Declaration of a (non-logical) constant:
+constant_declaration_yields_alt(form_theory(Cs,Fs), C, N,
+ form_theory(append_constant_arity_distinct_constant_arity_list(Cs,C,N),Fs)) :-
+    %distinct_constant_arity_list(Cs),
+    distinct_constant_arity_list_extending_primitive(Cs),
+    %formula_list(Fs),
+    formula_list_for(Fs, Cs),
+    %constant(C),
+    %natural(N),
+    not_member_of_distinct_constant_arity_list(C, N, Cs).
+
+% Declaration of an axiom:
+axiom_declaration_yields_alt(form_theory(Cs,Fs), F,
+                          form_theory(Cs,append_formula_formula_list(Fs,F))) :-
+    %distinct_constant_arity_list(Cs),
+    distinct_constant_arity_list_extending_primitive(Cs),
+    %formula_list(Fs),
+    formula_list_for(Fs, Cs),
+    %formula(F),
+    formula_for(F, Cs).
+
+% Inclusion of a theorem:
+theorem_inclusion_yields_alt(form_theory(Cs,Fs), F,
+                          form_theory(Cs,append_formula_formula_list(Fs,F))) :-
+    %distinct_constant_arity_list(Cs),
+    distinct_constant_arity_list_extending_primitive(Cs),
+    %formula_list(Fs),
+    formula_list_for(Fs, Cs),
+    %formula(F),
+    formula_for(F, Cs),
+    contextually_true_with_axioms(Fs, F).
+
+% Definition of a predicate:
+predicate_definition_yields_alt(form_theory(Cs,Fs), F, Vs, N, P, VsAsTs, D,
+ form_theory(append_constant_arity_distinct_constant_arity_list(Cs,P,N),append_formula_formula_list(Fs,D))) :-
+    %distinct_constant_arity_list(Cs),
+    distinct_constant_arity_list_extending_primitive(Cs),
+    %formula_list(Fs),
+    formula_list_for(Fs, Cs),
+    %formula(F),
+    formula_for(F, Cs),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    length_of_distinct_variable_list_is(Vs, N),
+    predicate(P),
+    not_member_of_distinct_constant_arity_list(P, N, Cs),
+    %term_list(VsAsTs),
+    distinct_variable_list_as_term_list_is(Vs, VsAsTs),
+    %formula(D),
+    universally_quantified_formula_is(Vs, iff_formula(predicate_formula(P,VsAsTs),F), D).
+
+% Definition of a function:
+function_definition_yields_alt(form_theory(Cs,Fs), F, Vs, N, V, V1, F1, F2, Fu,
+                               VsAsTs, F3, D,
+ form_theory(append_constant_arity_distinct_constant_arity_list(Cs,Fu,N),append_formula_formula_list(Fs,D))) :-
+    %distinct_constant_arity_list(Cs),
+    distinct_constant_arity_list_extending_primitive(Cs),
+    %formula_list(Fs),
+    formula_list_for(Fs, Cs),
+    %formula(F),
+    formula_for(F, Cs),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    length_of_distinct_variable_list_is(Vs, N),
+    %variable(V),
+    not_member_of_distinct_variable_list(V, Vs),
+    %variable(V1),
+    %formula(F1),
+    exists_one_formula_is(V, F, V1, F1),
+    %formula(F2),
+    universally_quantified_formula_is(Vs, F1, F2),
+    contextually_true_with_axioms(Fs, F2),
+    function(Fu),
+    not_member_of_distinct_constant_arity_list(Fu, N, Cs),
+    %term_list(VsAsTs),
+    distinct_variable_list_as_term_list_is(Vs, VsAsTs),
+    %formula(F3),
+    substituted_in_formula(F, V, function_term(Fu,VsAsTs), F3),
+    %formula(D),
+    universally_quantified_formula_is(Vs, F3, D).
+
+% Definition of a function -- 2nd form:
+function_definition_second_form_yields_alt(form_theory(Cs,Fs), T, Vs, N, Fu,
+                                           VsAsTs, D,
+ form_theory(append_constant_arity_distinct_constant_arity_list(Cs,Fu,N),append_formula_formula_list(Fs,D))) :-
+    %distinct_constant_arity_list(Cs),
+    distinct_constant_arity_list_extending_primitive(Cs),
+    %formula_list(Fs),
+    formula_list_for(Fs, Cs),
+    %term(T),
+    term_for(T, Cs),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    length_of_distinct_variable_list_is(Vs, N),
+    function(Fu),
+    not_member_of_distinct_constant_arity_list(Fu, N, Cs),
+    %term_list(VsAsTs),
+    distinct_variable_list_as_term_list_is(Vs, VsAsTs),
+    %formula(D),
+    universally_quantified_formula_is(Vs, equals_formula(function_term(Fu,VsAsTs),T), D).
+
+% Whole
+% -----
+
+% Valid extensions:
+valid_extension_alt(Th) :-
+    primitive_theory(Th).
+valid_extension_alt(Th2) :-
+    %theory(Th1),
+    %theory_extending_primitive(Th1),
+    valid_extension_alt(Th1),
+    %formula(F),
+    %theory(Th2),
+    %theory_extending_primitive(Th2),
+    theorem_inclusion_yields_alt(Th1, F, Th2).
+valid_extension_alt(Th2) :-
+    %theory(Th1),
+    %theory_extending_primitive(Th1),
+    valid_extension_alt(Th1),
+    %formula(F),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    %predicate(P),
+    %term_list(VsAsTs),
+    %formula(D),
+    %theory(Th2),
+    %theory_extending_primitive(Th2),
+    predicate_definition_yields_alt(Th1, F, Vs, N, P, VsAsTs, D, Th2).
+valid_extension_alt(Th2) :-
+    %theory(Th1),
+    %theory_extending_primitive(Th1),
+    valid_extension_alt(Th1),
+    %formula(F),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    %variable(V),
+    %variable(V1),
+    %formula(F1),
+    %formula(F2),
+    %function(Fu),
+    %term_list(VsAsTs),
+    %formula(F3),
+    %formula(D),
+    %theory(Th2),
+    %theory_extending_primitive(Th2),
+    function_definition_yields_alt(Th1, F, Vs, N, V, V1, F1, F2, Fu, VsAsTs,
+                                   F3, D, Th2).
+valid_extension_alt(Th2) :-
+    %theory(Th1),
+    %theory_extending_primitive(Th1),
+    valid_extension_alt(Th1),
+    %term(T),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    %function(Fu),
+    %term_list(VsAsTs),
+    %formula(D),
+    %theory(Th2),
+    %theory_extending_primitive(Th2),
+    function_definition_second_form_yields_alt(Th1, T, Vs, N, Fu, VsAsTs, D,
+                                               Th2).
+% NOTE Here and anywhere, We don't make use of
+% `constant_declaration_yields_alt/4` and `axiom_declaration_yields_alt/3`.
+
+% Comments
+% ========
+
+% TODO Knowledge base is not sufficiently tested. Verify again that the above 
+% follows from the admissible rules
+% in `fol-2.hn`, and consider perhaps adding more specific admissible rules
+% corresponding directly to the discussion above (not sure that it is needed).
+% Verify that `contextually_true_with_axioms/2` is justified (semantically;
+% see Endrton's Mathematical Introduction to Logic).
+
+% TODO Verify again that in ZFC, we obtain the appropriate meta-theorems allowing 
+% to extend the axioms schemes that are
+% originally formulated in terms of the primitive language, to any FOL theory
+% extending the primitive theory while satisfying the eliminability condition.
+
+% TODO Change metavariables `Cs` (or similar) for 
+% `distinct_constant_arity_list/1` into `CAs` (or similar).
+
+% NOTE The discussion above is based on contextually_true/2 type of entailment
+% (w.r.t a model and an assignment) and supports for general formulae (not 
+% necessarily closed).

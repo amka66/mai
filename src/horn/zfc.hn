@@ -1,0 +1,478 @@
+%
+%   Copyright 2020 Amir Kantor
+%
+%   Licensed under the Apache License, Version 2.0 (the "License");
+%   you may not use this file except in compliance with the License.
+%   You may obtain a copy of the License at
+%
+%       http://www.apache.org/licenses/LICENSE-2.0
+%
+%   Unless required by applicable law or agreed to in writing, software
+%   distributed under the License is distributed on an "AS IS" BASIS,
+%   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%   See the License for the specific language governing permissions and
+%   limitations under the License.
+%
+
+% ___File name:___ zfc.hn
+
+% ___File purpose:___ A Horn knowledge base defining the primitive language
+% and axioms of the Zermelo-Fraenkel set theory with Choice (ZFC).
+
+% Horn Knowledge Base
+% ===================
+
+% Preliminaries
+% -------------
+
+:- ensure_loaded('/app/mai/src/horn/fol-4.hn').
+
+:- style_check(-singleton).
+
+% The Language
+% ------------
+
+% The requirements from `fol-4.hn` are to add the following predicate under the
+% assertions mentioned:
+%primitive_distinct_constant_arity_list( ...1... ).
+% Assertion (1): ...1... satisfies `distinct_constant_arity_list( ...1... )`.
+% Assertion (2): there is exactly one primitive distinct constant arity list.
+% NOTE These assertions are satisfied here. 
+
+% The primitive signature includes only the binary predicate of set membership.
+
+% Abbreviations:
+predicate_membership(form_predicate(append_letter_word(append_letter_word(empty_word,form_letter(zero_binary,one_binary,zero_binary,one_binary,one_binary,zero_binary,one_binary)),form_letter(zero_binary,one_binary,one_binary,one_binary,one_binary,zero_binary,one_binary)))).
+
+primitive_distinct_constant_arity_list(append_constant_arity_distinct_constant_arity_list(empty_distinct_constant_arity_list,P_membership,successor_natural(successor_natural(zero_natural)))) :-
+    predicate_membership(P_membership).
+
+% The Axioms
+% ----------
+
+% The requirements from `fol-4.hn` are to add the following predicate under the
+% assertion mentioned:
+%primitive_axiom/1.
+% Assertion: any ...2... such that `primitive_axiom( ...2... )` must satisfy
+% `primitive_formula( ...2... )`.
+% NOTE This assertion is satisfied here. 
+
+% Abbreviations:
+variable_x(form_variable(append_letter_word(empty_word,form_letter(one_binary,one_binary,one_binary,one_binary,zero_binary,zero_binary,zero_binary)))).
+variable_y(form_variable(append_letter_word(empty_word,form_letter(one_binary,one_binary,one_binary,one_binary,zero_binary,zero_binary,one_binary)))).
+variable_z(form_variable(append_letter_word(empty_word,form_letter(one_binary,one_binary,one_binary,one_binary,zero_binary,one_binary,zero_binary)))).
+variable_A(form_variable(append_letter_word(empty_word,form_letter(one_binary,zero_binary,zero_binary,zero_binary,zero_binary,zero_binary,one_binary)))).
+variable_B(form_variable(append_letter_word(empty_word,form_letter(one_binary,zero_binary,zero_binary,zero_binary,zero_binary,one_binary,zero_binary)))).
+variable_C(form_variable(append_letter_word(empty_word,form_letter(one_binary,zero_binary,zero_binary,zero_binary,zero_binary,one_binary,one_binary)))).
+variable_M(form_variable(append_letter_word(empty_word,form_letter(one_binary,zero_binary,zero_binary,one_binary,one_binary,zero_binary,one_binary)))).
+primitive_formula_is_in(V1, V2,
+    predicate_formula(P_membership,
+        append_term_term_list(
+            append_term_term_list(
+                empty_term_list,
+                variable_term(V1)
+            ),
+            variable_term(V2)
+        )
+    )
+) :-
+    predicate_membership(P_membership),
+    variable(V1),
+    variable(V2).
+
+% Axiom of Extensionality:
+primitive_axiom(
+    forall_formula(V_A,
+        forall_formula(V_B,
+            implies_formula(
+                forall_formula(V_x,
+                    iff_formula(
+                        F_V_x_in_V_A,
+                        F_V_x_in_V_B
+                    )
+                ),
+                equals_formula(
+                    variable_term(V_A),
+                    variable_term(V_B)
+                )
+            )
+        )
+    )
+) :-
+    variable_A(V_A),
+    variable_B(V_B),
+    variable_x(V_x),
+    primitive_formula_is_in(V_x, V_A, F_V_x_in_V_A),
+    primitive_formula_is_in(V_x, V_B, F_V_x_in_V_B).
+
+% Axiom of Empty Set (or, Null Set):
+primitive_axiom(
+    exists_formula(V_A,
+        not_formula(
+            exists_formula(V_x,
+                F_V_x_in_V_A
+            )
+        )
+    )
+) :-
+    variable_A(V_A),
+    variable_x(V_x),
+    primitive_formula_is_in(V_x, V_A, F_V_x_in_V_A).
+
+% Axiom of Unordered Pair:
+primitive_axiom(
+    forall_formula(V_x,
+        forall_formula(V_y,
+            exists_formula(V_A,
+                forall_formula(V_z,
+                    iff_formula(
+                        F_V_z_in_V_A,
+                        or_formula(
+                            equals_formula(
+                                variable_term(V_z),
+                                variable_term(V_x)
+                            ),
+                            equals_formula(
+                                variable_term(V_z),
+                                variable_term(V_y)
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+) :-
+    variable_x(V_x),
+    variable_y(V_y),
+    variable_A(V_A),
+    variable_z(V_z),
+    primitive_formula_is_in(V_z, V_A, F_V_z_in_V_A).
+
+% Axiom of Union:
+primitive_axiom(
+    forall_formula(V_M,
+        exists_formula(V_A,
+            forall_formula(V_x,
+                iff_formula(
+                    F_V_x_in_V_A,
+                    exists_formula(V_B,
+                        and_formula(
+                            F_V_B_in_V_M,
+                            F_V_x_in_V_B
+                        )
+                    )
+                )
+            )
+        )
+    )
+) :-
+    variable_M(V_M),
+    variable_A(V_A),
+    variable_x(V_x),
+    variable_B(V_B),
+    primitive_formula_is_in(V_x, V_A, F_V_x_in_V_A),
+    primitive_formula_is_in(V_B, V_M, F_V_B_in_V_M),
+    primitive_formula_is_in(V_x, V_B, F_V_x_in_V_B).
+
+% Axiom of Power Set:
+primitive_axiom(
+    forall_formula(V_A,
+        exists_formula(V_M,
+            forall_formula(V_B,
+                iff_formula(
+                    F_V_B_in_V_M,
+                    forall_formula(V_x,
+                        implies_formula(
+                            F_V_x_in_V_B,
+                            F_V_x_in_V_A
+                        )
+                    )
+                )
+            )
+        )
+    )   
+) :-
+    variable_A(V_A),
+    variable_M(V_M),
+    variable_B(V_B),
+    variable_x(V_x),
+    primitive_formula_is_in(V_B, V_M, F_V_B_in_V_M),
+    primitive_formula_is_in(V_x, V_B, F_V_x_in_V_B),
+    primitive_formula_is_in(V_x, V_A, F_V_x_in_V_A).
+
+% Axiom Scheme of Separation (or, Specification, Subsets):
+primitive_axiom(F1) :-
+    %distinct_variable_list(Vs),
+    %variable(VVA),
+    not_member_of_distinct_variable_list(VVA, Vs),
+    %variable(VVB),
+    not_member_of_distinct_variable_list(VVB, Vs),
+    nonequal_variables(VVB, VVA),
+    %variable(VVx),
+    not_member_of_distinct_variable_list(VVx, Vs),
+    nonequal_variables(VVx, VVA),
+    nonequal_variables(VVx, VVB),
+    %formula(F),
+    primitive_formula(F),
+    not_free_in_formula(VVB, F),
+    primitive_formula_is_in(VVx, VVB, F_VVx_in_VVB),
+    primitive_formula_is_in(VVx, VVA, F_VVx_in_VVA),
+    %formula(F1),
+    universally_quantified_formula_is(Vs,
+        forall_formula(VVA,
+            exists_formula(VVB,
+                forall_formula(VVx,
+                    iff_formula(
+                        F_VVx_in_VVB,
+                        and_formula(
+                            F_VVx_in_VVA,
+                            F
+                        )
+                    )
+                )
+            )
+        ),
+        F1
+    ).
+
+% Axiom Scheme of Replacement:
+primitive_axiom(F2) :-
+    %distinct_variable_list(Vs),
+    %variable(VVA),
+    not_member_of_distinct_variable_list(VVA, Vs),
+    %variable(VVx),
+    not_member_of_distinct_variable_list(VVx, Vs),
+    nonequal_variables(VVx, VVA),
+    %variable(VVy),
+    not_member_of_distinct_variable_list(VVy, Vs),
+    nonequal_variables(VVy, VVA),
+    nonequal_variables(VVy, VVx),
+    %variable(VVB),
+    not_member_of_distinct_variable_list(VVB, Vs),
+    nonequal_variables(VVB, VVA),
+    nonequal_variables(VVB, VVx),
+    nonequal_variables(VVB, VVy),
+    %formula(F),
+    primitive_formula(F),
+    not_free_in_formula(VVB, F),
+    primitive_formula_is_in(VVx, VVA, F_VVx_in_VVA),
+    primitive_formula_is_in(VVy, VVB, F_VVy_in_VVB),
+    %variable(VVz),
+    %formula(F1),
+    unique_formula_is(VVy, F, VVz, F1),
+    %formula(F2),
+    universally_quantified_formula_is(Vs,
+        forall_formula(VVA,
+            implies_formula(
+                forall_formula(VVx,
+                    implies_formula(
+                        F_VVx_in_VVA,
+                        F1
+                    )
+                ),
+                exists_formula(VVB,
+                    forall_formula(VVy,
+                        iff_formula(
+                            F_VVy_in_VVB,
+                            exists_formula(VVx,
+                                and_formula(
+                                    F_VVx_in_VVA,
+                                    F
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        ),
+        F2
+    ).
+
+% Axiom of Infinity:
+primitive_axiom(
+    exists_formula(V_A,
+        and_formula(
+            exists_formula(V_x,
+                and_formula(
+                    F_V_x_in_V_A,
+                    not_formula(
+                        exists_formula(V_z,
+                            F_V_z_in_V_x
+                        )
+                    )
+                )
+            ),
+            forall_formula(V_x,
+                implies_formula(
+                    F_V_x_in_V_A,
+                    exists_formula(V_y,
+                        and_formula(
+                            F_V_y_in_V_A,
+                            forall_formula(V_z,
+                                iff_formula(
+                                    F_V_z_in_V_y,
+                                    or_formula(
+                                        F_V_z_in_V_x,
+                                        equals_formula(
+                                            variable_term(V_z),
+                                            variable_term(V_x)
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+) :-
+    variable_A(V_A),
+    variable_x(V_x),
+    variable_z(V_z),
+    variable_y(V_y),
+    primitive_formula_is_in(V_x, V_A, F_V_x_in_V_A),
+    primitive_formula_is_in(V_z, V_x, F_V_z_in_V_x),
+    primitive_formula_is_in(V_y, V_A, F_V_y_in_V_A),
+    primitive_formula_is_in(V_z, V_y, F_V_z_in_V_y).
+
+% Axiom of Regularity (or, Foundation):
+primitive_axiom(
+    forall_formula(V_A,
+        implies_formula(
+            exists_formula(V_x,
+                F_V_x_in_V_A
+            ),
+            exists_formula(V_x,
+                and_formula(
+                    F_V_x_in_V_A,
+                    not_formula(
+                        exists_formula(V_z,
+                            and_formula(
+                                F_V_z_in_V_x,
+                                F_V_z_in_V_A
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+) :-
+    variable_A(V_A),
+    variable_x(V_x),
+    variable_z(V_z),
+    primitive_formula_is_in(V_x, V_A, F_V_x_in_V_A),
+    primitive_formula_is_in(V_z, V_x, F_V_z_in_V_x),
+    primitive_formula_is_in(V_z, V_A, F_V_z_in_V_A).
+
+% Axiom of Choice:
+primitive_axiom(
+    forall_formula(V_M,
+        implies_formula(
+            and_formula(
+                forall_formula(V_A,
+                    forall_formula(V_B,
+                        implies_formula(
+                            and_formula(
+                                and_formula(
+                                    F_V_A_in_V_M,
+                                    F_V_B_in_V_M
+                                ),
+                                exists_formula(V_x,
+                                    and_formula(
+                                        F_V_x_in_V_A,
+                                        F_V_x_in_V_B
+                                    )
+                                )
+                            ),
+                            equals_formula(
+                                variable_term(V_A),
+                                variable_term(V_B)
+                            )
+                        )
+                    )
+                ),
+                forall_formula(V_A,
+                    implies_formula(
+                        F_V_A_in_V_M,
+                        exists_formula(V_x,
+                            F_V_x_in_V_A
+                        )
+                    )
+                )
+            ),
+            exists_formula(V_C,
+                and_formula(
+                    forall_formula(V_A,
+                        implies_formula(
+                            F_V_A_in_V_M,
+                            F1
+                        )
+                    ),
+                    forall_formula(V_x,
+                        implies_formula(
+                            F_V_x_in_V_C,
+                            exists_formula(V_A,
+                                and_formula(
+                                    F_V_A_in_V_M,
+                                    F_V_x_in_V_A
+                                )
+                            )
+                        )
+                    )
+                )
+            )   
+        )
+    )
+) :-
+    variable_M(V_M),
+    variable_A(V_A),
+    variable_B(V_B),
+    variable_x(V_x),
+    variable_z(V_z),
+    variable_C(V_C),
+    primitive_formula_is_in(V_A, V_M, F_V_A_in_V_M),
+    primitive_formula_is_in(V_B, V_M, F_V_B_in_V_M),
+    primitive_formula_is_in(V_x, V_A, F_V_x_in_V_A),
+    primitive_formula_is_in(V_x, V_B, F_V_x_in_V_B),
+    primitive_formula_is_in(V_x, V_C, F_V_x_in_V_C),
+    %formula(F1),
+    exists_one_formula_is(V_x,
+        and_formula(
+            F_V_x_in_V_C,
+            F_V_x_in_V_A
+        ),
+        V_z,
+        F1
+    ).
+
+% Comments
+% --------
+
+% TODO Knowledge base is not sufficiently tested. Verify again that the axioms
+% are equivalent to standard ZFC axioms (Enderton?). Especially re-consider
+% Separation, Replacement, and AC.
+
+% NOTE When we use a uniqueness / exists-one defined quantifier, we include
+% *infinitely* many axioms.
+% TODO Re-consider whether to let the defined quantifiers designate one
+% particular variable.
+
+% TODO (1) Prove the meta-theorems needed in set theory. Particularly, verify
+% that in ZFC, we obtain the appropriate meta-theorems allowing to extend
+% the axioms schemes that are
+% originally formulated in terms of the primitive language, to any FOL theory
+% extending the primitive theory while satisfying the eliminability condition.
+% (2) Make sure that the meta-theorems can be easily represented as admissible
+% rules.
+
+% TODO Regarding Separation and Replacement schemes, and the formulae `F` that
+% they refer to (satisfying `primitive_formula(F)`): maybe (?) we can let `F` be
+% be *any* formula. Currently a primitive axiom is limited to the primite
+% language. Does it make sense to remove this limitation? Here this may perhaps
+% work as we only extend the theory while elimination
+% condition is preserved, so there would be meta-theorems allowing to use any
+% formula in valid extensions (verify). Is that enough? Reconsider if we
+% want this (unsure), and whether it is valid.

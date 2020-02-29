@@ -1,0 +1,689 @@
+%
+%   Copyright 2020 Amir Kantor
+%
+%   Licensed under the Apache License, Version 2.0 (the "License");
+%   you may not use this file except in compliance with the License.
+%   You may obtain a copy of the License at
+%
+%       http://www.apache.org/licenses/LICENSE-2.0
+%
+%   Unless required by applicable law or agreed to in writing, software
+%   distributed under the License is distributed on an "AS IS" BASIS,
+%   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%   See the License for the specific language governing permissions and
+%   limitations under the License.
+%
+
+% ___File name:___ fol-2.hn
+
+% ___File purpose:___ A Horn knowledge base introducing a set of admissible
+% (derived) rules for proving theorems, and later extending FOL theories with
+% theorems and definitions.
+
+% Horn Knowledge Base
+% ========//=========
+
+% Preliminaries
+% -------------
+
+:- ensure_loaded('/app/mai/src/horn/fol-1.hn').
+
+:- multifile(contextually_true/2).
+:- discontiguous(contextually_true/2).
+
+:- style_check(-singleton).
+
+% Configuration
+% -------------
+
+% TODO Comment out the non-relevant fact.
+%include_admissible_rules(true_formula).
+include_admissible_rules(false_formula).
+% TODO Consider a different configuration method.
+
+% Structural Rules
+% ================
+
+% Concatenation of Formula Lists
+% ------------------------------
+
+concatenated_formula_lists(Fs, empty_formula_list, Fs) :-
+    formula_list(Fs).
+concatenated_formula_lists(Fs, append_formula_formula_list(Fs1,F1),
+                           append_formula_formula_list(Fs2,F1)) :-
+    %formula_list(Fs),
+    %formula_list(Fs1),
+    formula(F1),
+    %formula_list(Fs2),
+    concatenated_formula_lists(Fs, Fs1, Fs2).
+
+% Permutation, Contraction, and Weakening
+% ---------------------------------------
+
+% Permutation (a.k.a Exchange, Interchange) (admissible):
+contextually_true(FsC2, F) :-
+    include_admissible_rules(true_formula),
+    % TODO It appears that the following 3 assumptions are redundant (unsure):
+    formula_list(Fs1),
+    formula(F1),
+    formula(F2),
+    %formula_list(Fs2),
+    %formula_list(FsC1),
+    concatenated_formula_lists(append_formula_formula_list(append_formula_formula_list(Fs1,F1),F2),
+                               Fs2, FsC1),
+    %formula_list(FsC2),
+    concatenated_formula_lists(append_formula_formula_list(append_formula_formula_list(Fs1,F2),F1),
+                               Fs2, FsC2),
+    %formula(F),
+    contextually_true(FsC1, F).
+% NOTE In Permutation, it would be nice if there was a way to refrain from the
+% use of the concatenation predicate in the spirit of the Hypothesis Rule.
+%
+% Contraction (admissible)
+contextually_true(append_formula_formula_list(Fs,F1), F) :-
+    include_admissible_rules(true_formula),
+    % TODO It appears that the following 2 assumptions are redundant (unsure):
+    formula_list(Fs),
+    formula(F1),
+    %formula(F),
+    contextually_true(append_formula_formula_list(append_formula_formula_list(Fs,F1),F1), F).
+%
+% Weakening (a.k.a Thining) (admissible)
+contextually_true(append_formula_formula_list(Fs,F1), F) :-
+    include_admissible_rules(true_formula),
+    %formula_list(Fs),
+    %formula(F),
+    contextually_true(Fs, F),
+    formula(F1).
+
+% Rule for the Inclusion of Theorems
+% ==================================
+
+% Cut
+% ---
+
+% Cut (admissible)
+contextually_true(Fs, F) :-
+    include_admissible_rules(true_formula),
+    %formula_list(Fs),
+    %formula(F1),
+    contextually_true(Fs, F1),
+    %formula(F),
+    contextually_true(append_formula_formula_list(Fs,F1), F).
+% TODO Consider changing variable names in Cut, to match admissible rules #1
+% for predicate definition, function definition, and function definition -- 
+% 2nd form.
+
+% Rules for the Definition of 'Non-Logical' Constants
+% ===================================================
+
+% Nonequal Functions / Predicates
+% -------------------------------
+
+nonequal_functions(form_function(W1), form_function(W2)) :-
+    %word(W1),
+    %word(W2),
+    nonequal_words(W1, W2).
+
+nonequal_predicates(form_predicate(W1), form_predicate(W2)) :-
+    %word(W1),
+    %word(W2),
+    nonequal_words(W1, W2).
+
+% Natural Numbers
+% ---------------
+
+natural(zero_natural).
+natural(successor_natural(N)) :-
+    natural(N).
+
+nonequal_naturals(zero_natural, successor_natural(N)) :-
+    natural(N).
+nonequal_naturals(successor_natural(N), zero_natural) :-
+    natural(N).
+nonequal_naturals(successor_natural(N), successor_natural(N1)) :-
+    %natural(N),
+    %natural(N1),
+    nonequal_naturals(N, N1).
+
+% Length of Term Lists 
+% --------------------
+
+length_of_term_list_is(empty_term_list, zero_natural).
+length_of_term_list_is(append_term_term_list(Ts,T), successor_natural(N)) :-
+    %term_list(Ts),
+    term(T),
+    %natural(N),
+    length_of_term_list_is(Ts, N).
+
+% Distinct Variable Lists
+% -----------------------
+
+distinct_variable_list(empty_distinct_variable_list).
+distinct_variable_list(append_variable_distinct_variable_list(Vs,V)) :-
+    %distinct_variable_list(Vs),
+    %variable(V),
+    not_member_of_distinct_variable_list(V, Vs).
+%
+not_member_of_distinct_variable_list(V, empty_distinct_variable_list) :-
+    variable(V).
+% NOTE The following definition seems very inefficient due to the *two*
+% recursive calls (they overlap, as both essentially check that `Vs` is a valid
+% distinct variable list).
+% It seems to be exponential in the size of the list (?).
+% TODO Try to improve.
+not_member_of_distinct_variable_list(V1, append_variable_distinct_variable_list(Vs,V)) :-
+    %distinct_variable_list(Vs),
+    %variable(V),
+    not_member_of_distinct_variable_list(V, Vs),
+    %variable(V1),
+    not_member_of_distinct_variable_list(V1, Vs),
+    nonequal_variables(V1, V).
+
+% NOTE The following definition seems very inefficient due to the *two*
+% recursive calls (they overlap, as both essentially check that `Vs` is a valid
+% distinct variable list).
+% It seems to be exponential in the size of the list (?).
+% TODO Try to improve.
+distinct_variable_list_as_term_list_is(empty_distinct_variable_list,
+                                       empty_term_list).
+distinct_variable_list_as_term_list_is(append_variable_distinct_variable_list(Vs,V),
+                                       append_term_term_list(Ts,variable_term(V))) :-
+    %distinct_variable_list(Vs),
+    %variable(V),
+    not_member_of_distinct_variable_list(V, Vs),
+    %term_list(Ts),
+    distinct_variable_list_as_term_list_is(Vs, Ts).
+
+% NOTE The following definition seems very inefficient due to the *two*
+% recursive calls (they overlap, as both essentially check that `Vs` is a valid
+% distinct variable list).
+% It seems to be exponential in the size of the list (?).
+% TODO Try to improve.
+length_of_distinct_variable_list_is(empty_distinct_variable_list, zero_natural).
+length_of_distinct_variable_list_is(append_variable_distinct_variable_list(Vs,V),
+                                    successor_natural(N)) :-
+    %distinct_variable_list(Vs),
+    %variable(V),
+    not_member_of_distinct_variable_list(V, Vs),
+    %natural(N),
+    length_of_distinct_variable_list_is(Vs, N).
+
+% Generalized Universal Quantification
+% ------------------------------------
+
+universally_quantified_formula_is(empty_distinct_variable_list, F, F) :-
+    formula(F).
+universally_quantified_formula_is(append_variable_distinct_variable_list(Vs,V),
+                                  F, F1) :-
+    %distinct_variable_list(Vs),
+    %variable(V),
+    not_member_of_distinct_variable_list(V, Vs),
+    % TODO It appears that the following assumption is redundant (unsure):
+    formula(F),
+    %formula(F1),
+    universally_quantified_formula_is(Vs, forall_formula(V,F), F1).
+
+% Function + Arity not in Terms and Formulae
+% ------------------------------------------
+
+function_arity_not_in_term(Fu, N, variable_term(V)) :-
+    variable(V),
+    function(Fu),
+    natural(N).
+function_arity_not_in_term(Fu1, N, function_term(Fu,Ts)) :-
+    %function(Fu),
+    %term_list(Ts),
+    %function(Fu1),
+    %natural(N),
+    function_arity_not_in_term_list(Fu1, N, Ts),
+    nonequal_functions(Fu1, Fu).
+function_arity_not_in_term(Fu, N, function_term(Fu,Ts)) :-
+    %function(Fu),
+    %term_list(Ts),
+    %natural(N),
+    function_arity_not_in_term_list(Fu, N, Ts),
+    %natural(N1),
+    length_of_term_list_is(Ts, N1),
+    nonequal_naturals(N, N1).
+%
+function_arity_not_in_term_list(Fu, N, empty_term_list) :-
+    function(Fu),
+    natural(N).
+function_arity_not_in_term_list(Fu, N, append_term_term_list(Ts,T)) :-
+    %term_list(Ts),
+    %term(T),
+    %function(Fu),
+    %natural(N),
+    function_arity_not_in_term_list(Fu, N, Ts),
+    function_arity_not_in_term(Fu, N, T).    
+
+function_arity_not_in_formula(Fu, N, false_formula) :-
+    function(Fu),
+    natural(N).
+function_arity_not_in_formula(Fu, N, true_formula) :-
+    function(Fu),
+    natural(N).
+function_arity_not_in_formula(Fu, N, equals_formula(T1,T2)) :-
+    %term(T1),
+    %term(T2),
+    %function(Fu),
+    %natural(N),
+    function_arity_not_in_term(Fu, N, T1),
+    function_arity_not_in_term(Fu, N, T2).
+function_arity_not_in_formula(Fu, N, predicate_formula(P,Ts)) :-
+    predicate(P),
+    %term_list(Ts),
+    %function(Fu),
+    %natural(N),
+    function_arity_not_in_term_list(Fu, N, Ts).
+function_arity_not_in_formula(Fu, N, not_formula(F)) :-
+    %formula(F),
+    %function(Fu),
+    %natural(N),
+    function_arity_not_in_formula(Fu, N, F).
+function_arity_not_in_formula(Fu, N, and_formula(F1,F2)) :-
+    %formula(F1),
+    %formula(F2),
+    %function(Fu),
+    %natural(N),
+    function_arity_not_in_formula(Fu, N, F1),
+    function_arity_not_in_formula(Fu, N, F2).
+function_arity_not_in_formula(Fu, N, or_formula(F1,F2)) :-
+    %formula(F1),
+    %formula(F2),
+    %function(Fu),
+    %natural(N),
+    function_arity_not_in_formula(Fu, N, F1),
+    function_arity_not_in_formula(Fu, N, F2).
+function_arity_not_in_formula(Fu, N, implies_formula(F1,F2)) :-
+    %formula(F1),
+    %formula(F2),
+    %function(Fu),
+    %natural(N),
+    function_arity_not_in_formula(Fu, N, F1),
+    function_arity_not_in_formula(Fu, N, F2).
+function_arity_not_in_formula(Fu, N, iff_formula(F1,F2)) :-
+    %formula(F1),
+    %formula(F2),
+    %function(Fu),
+    %natural(N),
+    function_arity_not_in_formula(Fu, N, F1),
+    function_arity_not_in_formula(Fu, N, F2).
+function_arity_not_in_formula(Fu, N, forall_formula(V,F)) :-
+    variable(V),
+    %formula(F),
+    %function(Fu),
+    %natural(N),
+    function_arity_not_in_formula(Fu, N, F).
+function_arity_not_in_formula(Fu, N, exists_formula(V,F)) :-
+    variable(V),
+    %formula(F),
+    %function(Fu),
+    %natural(N),
+    function_arity_not_in_formula(Fu, N, F).
+
+function_arity_not_in_formula_list(Fu, N, empty_formula_list) :-
+    function(Fu),
+    natural(N).
+function_arity_not_in_formula_list(Fu, N, append_formula_formula_list(Fs,F)) :-
+    %formula_list(Fs),
+    %formula(F),
+    %function(Fu),
+    %natural(N),
+    function_arity_not_in_formula_list(Fu, N, Fs),
+    function_arity_not_in_formula(Fu, N, F).    
+
+% Predicate + Arity not in Terms and Formulae
+% -------------------------------------------
+
+predicate_arity_not_in_term(P, N, T) :-
+    term(T),
+    predicate(P),
+    natural(N).
+
+predicate_arity_not_in_term_list(P, N, Ts) :-
+    term_list(Ts),
+    predicate(P),
+    natural(N).
+
+predicate_arity_not_in_formula(P, N, false_formula) :-
+    predicate(P),
+    natural(N).
+predicate_arity_not_in_formula(P, N, true_formula) :-
+    predicate(P),
+    natural(N).
+predicate_arity_not_in_formula(P, N, equals_formula(T1,T2)) :-
+    %term(T1),
+    %term(T2),
+    %predicate(P),
+    %natural(N),
+    predicate_arity_not_in_term(P, N, T1),
+    predicate_arity_not_in_term(P, N, T2).
+predicate_arity_not_in_formula(P1, N, predicate_formula(P,Ts)) :-
+    %predicate(P),
+    %term_list(Ts),
+    %predicate(P1),
+    %natural(N),
+    predicate_arity_not_in_term_list(P1, N, Ts),
+    nonequal_predicates(P1, P).
+predicate_arity_not_in_formula(P, N, predicate_formula(P,Ts)) :-
+    %predicate(P),
+    %term_list(Ts),
+    %natural(N),
+    predicate_arity_not_in_term_list(P, N, Ts),
+    %natural(N1),
+    length_of_term_list_is(Ts, N1),
+    nonequal_naturals(N, N1).
+predicate_arity_not_in_formula(P, N, not_formula(F)) :-
+    %formula(F),
+    %predicate(P),
+    %natural(N),
+    predicate_arity_not_in_formula(P, N, F).
+predicate_arity_not_in_formula(P, N, and_formula(F1,F2)) :-
+    %formula(F1),
+    %formula(F2),
+    %predicate(P),
+    %natural(N),
+    predicate_arity_not_in_formula(P, N, F1),
+    predicate_arity_not_in_formula(P, N, F2).
+predicate_arity_not_in_formula(P, N, or_formula(F1,F2)) :-
+    %formula(F1),
+    %formula(F2),
+    %predicate(P),
+    %natural(N),
+    predicate_arity_not_in_formula(P, N, F1),
+    predicate_arity_not_in_formula(P, N, F2).
+predicate_arity_not_in_formula(P, N, implies_formula(F1,F2)) :-
+    %formula(F1),
+    %formula(F2),
+    %predicate(P),
+    %natural(N),
+    predicate_arity_not_in_formula(P, N, F1),
+    predicate_arity_not_in_formula(P, N, F2).
+predicate_arity_not_in_formula(P, N, iff_formula(F1,F2)) :-
+    %formula(F1),
+    %formula(F2),
+    %predicate(P),
+    %natural(N),
+    predicate_arity_not_in_formula(P, N, F1),
+    predicate_arity_not_in_formula(P, N, F2).
+predicate_arity_not_in_formula(P, N, forall_formula(V,F)) :-
+    variable(V),
+    %formula(F),
+    %predicate(P),
+    %natural(N),
+    predicate_arity_not_in_formula(P, N, F).
+predicate_arity_not_in_formula(P, N, exists_formula(V,F)) :-
+    variable(V),
+    %formula(F),
+    %predicate(P),
+    %natural(N),
+    predicate_arity_not_in_formula(P, N, F).
+
+predicate_arity_not_in_formula_list(P, N, empty_formula_list) :-
+    predicate(P),
+    natural(N).
+predicate_arity_not_in_formula_list(P, N, append_formula_formula_list(Fs,F)) :-
+    %formula_list(Fs),
+    %formula(F),
+    %predicate(P),
+    %natural(N),
+    predicate_arity_not_in_formula_list(P, N, Fs),
+    predicate_arity_not_in_formula(P, N, F).
+
+% Definition of a Predicate (non-logical cosntant)
+% ------------------------------------------------
+
+% The following predicate indicates the set of terms that capture the
+% definition in detail, for convenience.
+predicate_definition(Fs, F, Vs, N, P, VsAsTs, D) :-
+    %formula_list(Fs),
+    %formula(F),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    length_of_distinct_variable_list_is(Vs, N),
+    %predicate(P),
+    predicate_arity_not_in_formula_list(P, N, Fs),
+    predicate_arity_not_in_formula(P, N, F),
+    %term_list(VsAsTs),
+    distinct_variable_list_as_term_list_is(Vs, VsAsTs),
+    %formula(D),
+    universally_quantified_formula_is(Vs, iff_formula(predicate_formula(P,VsAsTs),F), D).
+
+% Admissible rule #1 -- predicate definition.
+% DONE Verified May 26, 2016 by Amir Kantor.
+contextually_true(Fs, F1) :-
+    include_admissible_rules(true_formula),
+    %formula_list(Fs),
+    %formula(F),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    %predicate(P),
+    %term_list(VsAsTs),
+    %formula(D),
+    predicate_definition(Fs, F, Vs, N, P, VsAsTs, D),
+    %formula(F1),
+    predicate_arity_not_in_formula(P, N, F1),
+    contextually_true(append_formula_formula_list(Fs,D), F1).
+
+% TODO We may define:
+% `predicate_eliminated_formula_is(P, F, Vs, F1, F2)`
+% which is a translation of formula `F1` to an equivalent formula `F2` that
+% eliminates predicate `P` (of the induced arity) by formula `F`, according to
+% distinct variable list `Vs`.
+% DONE Verified that the required translation indeed exists, May 31, 2016 by
+% Amir Kantor.
+
+% Admissible rule #2 -- predicate definition.
+% DONE Verified May 31, 2016 by Amir Kantor.
+contextually_true(append_formula_formula_list(Fs,D), iff_formula(F1,F2)) :-
+    include_admissible_rules(true_formula),
+    %formula_list(Fs),
+    %formula(F),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    %predicate(P),
+    %term_list(VsAsTs),
+    %formula(D),
+    predicate_definition(Fs, F, Vs, N, P, VsAsTs, D),
+    formula(F1), % TODO Probably superfluous once the translation is defined.
+    formula(F2), % TODO Probably superfluous once the translation is defined.
+    predicate_eliminated_formula_is(P, F, Vs, F1, F2).
+
+% Definition of a Function (non-logical cosntant)
+% -----------------------------------------------
+
+% The following predicate indicates the set of terms that capture the
+% definition in detail, for convenience.
+function_definition(Fs, F, Vs, N, V, V1, F1, F2, Fu, VsAsTs, F3, D) :-
+    %formula_list(Fs),
+    %formula(F),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    length_of_distinct_variable_list_is(Vs, N),
+    %variable(V),
+    not_member_of_distinct_variable_list(V, Vs),
+    %variable(V1)
+    %formula(F1),
+    exists_one_formula_is(V, F, V1, F1),
+    %formula(F2),
+    universally_quantified_formula_is(Vs, F1, F2),
+    contextually_true(Fs, F2),
+    %function(Fu),
+    function_arity_not_in_formula_list(Fu, N, Fs),
+    function_arity_not_in_formula(Fu, N, F),
+    %term_list(VsAsTs),
+    distinct_variable_list_as_term_list_is(Vs, VsAsTs),
+    %formula(F3),
+    substituted_in_formula(F, V, function_term(Fu,VsAsTs), F3),
+    %formula(D),
+    universally_quantified_formula_is(Vs, F3, D).
+
+% Admissible rule #1 -- function definition.
+% DONE Verified June 1, 2016 by Amir Kantor.
+contextually_true(Fs, F4) :-
+    include_admissible_rules(true_formula),
+    %formula_list(Fs),
+    %formula(F),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    %variable(V),
+    %variable(V1),
+    %formula(F1),
+    %formula(F2),
+    %function(Fu),
+    %term_list(VsAsTs),
+    %formula(F3),
+    %formula(D),
+    function_definition(Fs, F, Vs, N, V, V1, F1, F2, Fu, VsAsTs, F3, D),
+    %formula(F4),
+    function_arity_not_in_formula(Fu, N, F4),
+    contextually_true(append_formula_formula_list(Fs,D), F4).
+
+% TODO We may define:
+% `function_eliminated_formula_is(Fu, F, Vs, V, F1, F2)`
+% which is a translation of formula `F1` to an equivalent formula `F2` that
+% eliminates function `Fu` (of the induced arity) by formula `F`, according to
+% distinct variable list `Vs` and variable `V` not in `Vs`.
+% DONE Verified that the required translation indeed exists, July 12, 2016 by
+% Amir Kantor.
+
+% Admissible rule #2 -- function definition.
+% DONE Verified July 9, 2016 by Amir Kantor.
+contextually_true(append_formula_formula_list(Fs,D), iff_formula(F4,F5)) :-
+    include_admissible_rules(true_formula),
+    %formula_list(Fs),
+    %formula(F),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    %variable(V),
+    %variable(V1),
+    %formula(F1),
+    %formula(F2),
+    %function(Fu),
+    %term_list(VsAsTs),
+    %formula(F3),
+    %formula(D),
+    function_definition(Fs, F, Vs, N, V, V1, F1, F2, Fu, VsAsTs, F3, D),
+    formula(F4), % TODO Probably superfluous once the translation is defined.
+    formula(F5), % TODO Probably superfluous once the translation is defined.
+    function_eliminated_formula_is(Fu, F, Vs, V, F4, F5).
+
+% Definition of a Function (non-logical cosntant) -- 2nd Form
+% -----------------------------------------------------------
+
+% The following predicate indicates the set of terms that capture the
+% definition in detail, for convenience.
+function_definition_second_form(Fs, T, Vs, N, Fu, VsAsTs, D) :-
+    %formula_list(Fs),
+    %term(T),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    length_of_distinct_variable_list_is(Vs, N),
+    %function(Fu),
+    function_arity_not_in_formula_list(Fu, N, Fs),
+    function_arity_not_in_term(Fu, N, T),
+    %term_list(VsAsTs),
+    distinct_variable_list_as_term_list_is(Vs, VsAsTs),
+    %formula(D),
+    universally_quantified_formula_is(Vs, equals_formula(function_term(Fu,VsAsTs),T), D).
+
+% Admissible rule #1 -- function definition 2nd form.
+% DONE Verified July 13, 2016 by Amir Kantor (follows from the general form of 
+% function definition).
+contextually_true(Fs, F1) :-
+    include_admissible_rules(true_formula),
+    %formula_list(Fs),
+    %term(T),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    %function(Fu),
+    %term_list(VsAsTs),
+    %formula(D),
+    function_definition_second_form(Fs, T, Vs, N, Fu, VsAsTs, D),
+    %formula(F1),
+    function_arity_not_in_formula(Fu, N, F1),
+    contextually_true(append_formula_formula_list(Fs,D), F1).
+
+% The following is a translation of formula `F1` to an equivalent formula `F2`
+% that eliminates function `Fu` (of the induced arity) by term `T` according to
+% distinct variable list `Vs`.
+% DONE Verified July 13, 2016 by Amir Kantor.
+function_eliminated_second_form_formula_is(Fu, T, Vs, F1, F2) :-
+    function(Fu), % TODO Probably superfluous once the translation (general
+                  % form of function definition) is defined.
+    %term(T),
+    %distinct_variable_list(Vs),
+    %variable(V),
+    not_member_of_distinct_variable_list(V, Vs),
+    not_free_in_term(V, T),
+    formula(F1), % TODO Probably superfluous once the translation (general
+                 % form of function definition) is defined.
+    formula(F2), % TODO Probably superfluous once the translation (general
+                 % form of function definition) is defined.
+    function_eliminated_formula_is(Fu, equals_formula(variable_term(V),T), Vs,
+                                   V, F1, F2).
+
+% Admissible rule #2 -- function definition 2nd form.
+% DONE Verified July 13, 2016 by Amir Kantor (follows from the general form of 
+% function definition).
+contextually_true(append_formula_formula_list(Fs,D), iff_formula(F1,F2)) :-
+    include_admissible_rules(true_formula),
+    %formula_list(Fs),
+    %term(T),
+    %distinct_variable_list(Vs),
+    %natural(N),
+    %function(Fu),
+    %term_list(VsAsTs),
+    %formula(D),
+    function_definition_second_form(Fs, T, Vs, N, Fu, VsAsTs, D),
+    formula(F1), % TODO Probably superfluous once the translation is fully
+                 % defined.
+    formula(F2), % TODO Probably superfluous once the translation is fully
+                 % defined.
+    function_eliminated_second_form_formula_is(Fu, T, Vs, F1, F2).
+
+% Comments
+% ========
+
+% TODO Knowledge base is not sufficiently tested. Verify again that the rules
+% are admissible (derived), which can be done semantically (after re-assuring
+% that natural deduction is strongly sound and complete).
+
+% TODO Verify again that the rules for the definition of (non-logical) constants,
+% as well as Cut: (1) are comprehensive enough to justify the principles for
+% extending theories in `fol-3.hn` and `fol-4.hn`; (2) in ZFC, the 
+% eliminability property of constants (admissible rules #2) yields the
+% appropriate meta-theorems allowing to extend the axioms schemes that are
+% originally formulated in terms of the primitive language, to any FOL theory
+% extending the primitive theory while satisfying the eliminability condition.
+
+% TODO Constant-eliminating translations are missing.
+
+% NOTE I'm not sure that it is straightforward to prove Weakening in our formal
+% system. It seems to require changing variables *during* the inductive proof
+% (in forall_formula-I and exists_formula-E), maybe by strengthening the
+% inductive hypotheses, or some other way (?). Or, this might be related
+% to a substituion property of sequents. And the latter might be related to the
+% additional derived rule (mentioned in `fol-1.hn`) that we need in order to
+% reduce the less-restrictive (stronger) exists_formula-E formulation to the
+% existing one.
+% TODO Settle on the proper way to directly explain Weakening.
+
+% NOTE Our admissible rules for definitions are relatively powerful, 
+% supporting, e.g., "temporary" definitions within proofs, in addition to 
+% "persistent" definitions.
+
+% NOTE In function definition (general form), the defined function (with the
+% corresponding arity) doesn't necessarily appear in the defining formula (if 
+% variable `V` isn't free in formula `F`). It means that the same function
+% and arity may be later re-defined, as it may not be present in the contextual
+% formula list that we obtain after the definition.
+% However, the admissible rules, which seem to be correct regardless of that,
+% say that such re-definitions are OK?
+% TODO Could that be? Rethink this issue and close it.
+
+% NOTE The discussion above is based on contextually_true/2 type of entailment
+% (w.r.t a model and an assignment) and supports for general formulae (not 
+% necessarily closed).

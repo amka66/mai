@@ -1,0 +1,776 @@
+%
+%   Copyright 2020 Amir Kantor
+%
+%   Licensed under the Apache License, Version 2.0 (the "License");
+%   you may not use this file except in compliance with the License.
+%   You may obtain a copy of the License at
+%
+%       http://www.apache.org/licenses/LICENSE-2.0
+%
+%   Unless required by applicable law or agreed to in writing, software
+%   distributed under the License is distributed on an "AS IS" BASIS,
+%   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%   See the License for the specific language governing permissions and
+%   limitations under the License.
+%
+
+% ___File name:___ fol-1.hn
+
+% ___File purpose:___ A Horn knowledge base defining classical first-order
+% logic with equality (FOL) -- both syntax and a proof system called natural 
+% deduction (ND). Here we consider the 'universal' language, with *all* 
+% 'non-logical' constants available (whereas a FOL theory selects some).
+
+% Horn Knowledge Base
+% ===================
+
+% Preliminaries
+% -------------
+
+:- style_check(-singleton).
+
+binary(zero_binary).
+binary(one_binary).
+
+nonequal_binaries(zero_binary, one_binary).
+nonequal_binaries(one_binary, zero_binary).
+
+letter(form_letter(B1,B2,B3,B4,B5,B6,B7)) :-
+    binary(B1),
+    binary(B2),
+    binary(B3),
+    binary(B4),
+    binary(B5),
+    binary(B6),
+    binary(B7).
+
+nonequal_letters(form_letter(B1,B2,B3,B4,B5,B6,B7),
+                 form_letter(B1t,B2t,B3t,B4t,B5t,B6t,B7t)) :-
+    %binary(B1),
+    binary(B2),
+    binary(B3),
+    binary(B4),
+    binary(B5),
+    binary(B6),
+    binary(B7),
+    %binary(B1t),
+    binary(B2t),
+    binary(B3t),
+    binary(B4t),
+    binary(B5t),
+    binary(B6t),
+    binary(B7t),
+    nonequal_binaries(B1, B1t).
+%
+% NOTE The assumptions in the following rules can be weakened, in which case
+% the rules would not be mutually exclusive.
+nonequal_letters(form_letter(B1,B2,B3,B4,B5,B6,B7),
+                 form_letter(B1,B2t,B3t,B4t,B5t,B6t,B7t)) :-
+    binary(B1),
+    %binary(B2),
+    binary(B3),
+    binary(B4),
+    binary(B5),
+    binary(B6),
+    binary(B7),
+    %binary(B2t),
+    binary(B3t),
+    binary(B4t),
+    binary(B5t),
+    binary(B6t),
+    binary(B7t),
+    nonequal_binaries(B2, B2t).
+%
+nonequal_letters(form_letter(B1,B2,B3,B4,B5,B6,B7),
+                 form_letter(B1,B2,B3t,B4t,B5t,B6t,B7t)) :-
+    binary(B1),
+    binary(B2),
+    %binary(B3),
+    binary(B4),
+    binary(B5),
+    binary(B6),
+    binary(B7),
+    %binary(B3t),
+    binary(B4t),
+    binary(B5t),
+    binary(B6t),
+    binary(B7t),
+    nonequal_binaries(B3, B3t).
+%
+nonequal_letters(form_letter(B1,B2,B3,B4,B5,B6,B7),
+                 form_letter(B1,B2,B3,B4t,B5t,B6t,B7t)) :-
+    binary(B1),
+    binary(B2),
+    binary(B3),
+    %binary(B4),
+    binary(B5),
+    binary(B6),
+    binary(B7),
+    %binary(B4t),
+    binary(B5t),
+    binary(B6t),
+    binary(B7t),
+    nonequal_binaries(B4, B4t).
+%
+nonequal_letters(form_letter(B1,B2,B3,B4,B5,B6,B7),
+                 form_letter(B1,B2,B3,B4,B5t,B6t,B7t)) :-
+    binary(B1),
+    binary(B2),
+    binary(B3),
+    binary(B4),
+    %binary(B5),
+    binary(B6),
+    binary(B7),
+    %binary(B5t),
+    binary(B6t),
+    binary(B7t),
+    nonequal_binaries(B5, B5t).
+%
+nonequal_letters(form_letter(B1,B2,B3,B4,B5,B6,B7),
+                 form_letter(B1,B2,B3,B4,B5,B6t,B7t)) :-
+    binary(B1),
+    binary(B2),
+    binary(B3),
+    binary(B4),
+    binary(B5),
+    %binary(B6),
+    binary(B7),
+    %binary(B6t),
+    binary(B7t),
+    nonequal_binaries(B6, B6t).
+%
+nonequal_letters(form_letter(B1,B2,B3,B4,B5,B6,B7),
+                 form_letter(B1,B2,B3,B4,B5,B6,B7t)) :-
+    binary(B1),
+    binary(B2),
+    binary(B3),
+    binary(B4),
+    binary(B5),
+    binary(B6),
+    %binary(B7),
+    %binary(B7t),
+    nonequal_binaries(B7, B7t).
+
+word(empty_word).
+word(append_letter_word(W,L)) :-
+    word(W),
+    letter(L).
+
+nonequal_words(empty_word, append_letter_word(W,L)) :-
+    word(W),
+    letter(L).
+nonequal_words(append_letter_word(W,L), empty_word) :-
+    word(W),
+    letter(L).
+nonequal_words(append_letter_word(W,L), append_letter_word(W1,L1)) :-
+    %word(W),
+    letter(L),
+    %word(W1),
+    letter(L1),
+    nonequal_words(W, W1).
+% NOTE In the following rule, the assumptions can be weakened, in which case
+% the rules would not be mutually exclusive.
+nonequal_words(append_letter_word(W,L), append_letter_word(W,L1)) :-
+    word(W),
+    letter(L),
+    letter(L1),
+    nonequal_letters(L, L1).
+
+% Terms
+% -----
+
+variable(form_variable(W)) :-
+    word(W).
+
+nonequal_variables(form_variable(W1), form_variable(W2)) :-
+    %word(W1),
+    %word(W2),
+    nonequal_words(W1, W2).
+
+function(form_function(W)) :-
+    word(W).
+
+term(variable_term(V)) :-
+    variable(V).
+term(function_term(Fu,Ts)) :-
+    function(Fu),
+    term_list(Ts).
+term_list(empty_term_list).
+term_list(append_term_term_list(Ts,T)) :-
+    term_list(Ts),
+    term(T).
+
+% Formulae
+% -------- 
+
+predicate(form_predicate(W)) :-
+    word(W).
+
+formula(false_formula).
+formula(true_formula).
+formula(equals_formula(T1,T2)) :-
+    term(T1),
+    term(T2).
+formula(predicate_formula(P,Ts)) :-
+    predicate(P),
+    term_list(Ts).
+formula(not_formula(F)) :-
+    formula(F).
+formula(and_formula(F1,F2)) :-
+    formula(F1),
+    formula(F2).
+formula(or_formula(F1,F2)) :-
+    formula(F1),
+    formula(F2).
+formula(implies_formula(F1,F2)) :-
+    formula(F1),
+    formula(F2).
+formula(iff_formula(F1,F2)) :-
+    formula(F1),
+    formula(F2).
+formula(forall_formula(V,F)) :-
+    variable(V),
+    formula(F).
+formula(exists_formula(V,F)) :-
+    variable(V),
+    formula(F).
+
+formula_list(empty_formula_list).
+formula_list(append_formula_formula_list(Fs,F)) :-
+    formula_list(Fs),
+    formula(F).
+
+% NOTE In the following rule, the assumptions can be strengthened so as to
+% make the rules mutually exclusive. However, as far as i see, this requires
+% the definition of a formula *not* being a member of a formula list.
+member_of_formula_list(F, append_formula_formula_list(Fs,F)) :-
+    formula_list(Fs),
+    formula(F).
+member_of_formula_list(F, append_formula_formula_list(Fs,F1)) :-
+    %formula_list(Fs),
+    formula(F1),
+    %formula(F),
+    member_of_formula_list(F, Fs).
+
+% Free Variables
+% --------------
+
+not_free_in_term(V, variable_term(V1)) :-
+    %variable(V1),
+    %variable(V),
+    nonequal_variables(V, V1).
+not_free_in_term(V, function_term(Fu,Ts)) :-
+    function(Fu),
+    %term_list(Ts),
+    %variable(V),
+    not_free_in_term_list(V, Ts).
+not_free_in_term_list(V, empty_term_list) :-
+    variable(V).
+not_free_in_term_list(V, append_term_term_list(Ts,T)) :-
+    %term_list(Ts),
+    %term(T),
+    %variable(V),
+    not_free_in_term_list(V, Ts),
+    not_free_in_term(V, T).
+
+not_free_in_formula(V, false_formula) :-
+    variable(V).
+not_free_in_formula(V, true_formula) :-
+    variable(V).
+not_free_in_formula(V, equals_formula(T1,T2)) :-
+    %term(T1),
+    %term(T2),
+    %variable(V),
+    not_free_in_term(V, T1),
+    not_free_in_term(V, T2).
+not_free_in_formula(V, predicate_formula(P,Ts)) :-
+    predicate(P),
+    %term_list(Ts),
+    %variable(V),
+    not_free_in_term_list(V, Ts).
+not_free_in_formula(V, not_formula(F)) :-
+    %formula(F),
+    %variable(V),
+    not_free_in_formula(V, F).
+not_free_in_formula(V, and_formula(F1,F2)) :-
+    %formula(F1),
+    %formula(F2),
+    %variable(V),
+    not_free_in_formula(V, F1),
+    not_free_in_formula(V, F2).
+not_free_in_formula(V, or_formula(F1,F2)) :-
+    %formula(F1),
+    %formula(F2),
+    %variable(V),
+    not_free_in_formula(V, F1),
+    not_free_in_formula(V, F2).
+not_free_in_formula(V, implies_formula(F1,F2)) :-
+    %formula(F1),
+    %formula(F2),
+    %variable(V),
+    not_free_in_formula(V, F1),
+    not_free_in_formula(V, F2).
+not_free_in_formula(V, iff_formula(F1,F2)) :-
+    %formula(F1),
+    %formula(F2),
+    %variable(V),
+    not_free_in_formula(V, F1),
+    not_free_in_formula(V, F2).
+not_free_in_formula(V, forall_formula(V,F)) :-
+    variable(V),
+    formula(F).
+% NOTE In the following rule, the assumptions can be weakened, in which case
+% the rules would not be mutually exclusive.
+not_free_in_formula(V, forall_formula(V1,F)) :-
+    %variable(V1),
+    %formula(F),
+    %variable(V),
+    nonequal_variables(V, V1),
+    not_free_in_formula(V, F).
+not_free_in_formula(V, exists_formula(V,F)) :-
+    variable(V),
+    formula(F).
+% NOTE In the following rule, the assumptions can be weakened, in which case
+% the rules would not be mutually exclusive.
+not_free_in_formula(V, exists_formula(V1,F)) :-
+    %variable(V1),
+    %formula(F),
+    %variable(V),
+    nonequal_variables(V, V1),
+    not_free_in_formula(V, F).
+
+not_free_in_formula_list(V, empty_formula_list) :-
+    variable(V).
+not_free_in_formula_list(V, append_formula_formula_list(Fs,F)) :-
+    %formula_list(Fs),
+    %formula(F),
+    %variable(V),
+    not_free_in_formula_list(V, Fs),
+    not_free_in_formula(V, F).
+
+equal_to_or_not_free_in_formula(V, V, F) :-
+    variable(V),
+    formula(F).
+% NOTE In the following rule, the assumptions can be weakened, in which case
+% the rules would not be mutually exclusive.
+equal_to_or_not_free_in_formula(V, V1, F) :-
+    %variable(V),
+    %variable(V1),
+    nonequal_variables(V, V1),
+    %formula(F),
+    not_free_in_formula(V, F).
+
+% Substitution
+% ------------
+
+substituted_in_term(variable_term(V), V, T, T) :-
+    variable(V),
+    term(T).
+substituted_in_term(variable_term(V1), V, T, variable_term(V1)) :-
+    %variable(V1),
+    %variable(V),
+    term(T),
+    nonequal_variables(V, V1).
+substituted_in_term(function_term(Fu,Ts), V, T, function_term(Fu,Ts1)) :-
+    function(Fu),
+    %term_list(Ts),
+    %variable(V),
+    %term(T),
+    %term_list(Ts1),
+    substituted_in_term_list(Ts, V, T, Ts1).
+substituted_in_term_list(empty_term_list, V, T, empty_term_list) :-
+    variable(V),
+    term(T).
+substituted_in_term_list(append_term_term_list(Ts,T1), V, T,
+                         append_term_term_list(Ts1,T2)) :-
+    %term_list(Ts),
+    %term(T1),
+    %variable(V),
+    %term(T),
+    %term_list(Ts1),
+    substituted_in_term_list(Ts, V, T, Ts1),
+    %term(T2),
+    substituted_in_term(T1, V, T, T2).
+
+substituted_in_formula(false_formula, V, T, false_formula) :-
+    variable(V),
+    term(T).
+substituted_in_formula(true_formula, V, T, true_formula) :-
+    variable(V),
+    term(T).
+substituted_in_formula(equals_formula(T1,T2), V, T, equals_formula(T1t,T2t)) :-
+    %term(T1),
+    %term(T2),
+    %variable(V),
+    %term(T),
+    %term(T1t),
+    substituted_in_term(T1, V, T, T1t),
+    %term(T2t),
+    substituted_in_term(T2, V, T, T2t).
+substituted_in_formula(predicate_formula(P,Ts), V, T,
+                       predicate_formula(P,Ts1)) :-
+    predicate(P),
+    %term_list(Ts),
+    %variable(V),
+    %term(T),
+    %term_list(Ts1),
+    substituted_in_term_list(Ts, V, T, Ts1).
+substituted_in_formula(not_formula(F), V, T, not_formula(F1)) :-
+    %formula(F),
+    %variable(V),
+    %term(T),
+    %formula(F1),
+    substituted_in_formula(F, V, T, F1).
+substituted_in_formula(and_formula(F1,F2), V, T, and_formula(F1t,F2t)) :-
+    %formula(F1),
+    %formula(F2),
+    %variable(V),
+    %term(T),
+    %formula(F1t),
+    substituted_in_formula(F1, V, T, F1t),
+    %formula(F2t),
+    substituted_in_formula(F2, V, T, F2t).
+substituted_in_formula(or_formula(F1,F2), V, T, or_formula(F1t,F2t)) :-
+    %formula(F1),
+    %formula(F2),
+    %variable(V),
+    %term(T),
+    %formula(F1t),
+    substituted_in_formula(F1, V, T, F1t),
+    %formula(F2t),
+    substituted_in_formula(F2, V, T, F2t).
+substituted_in_formula(implies_formula(F1,F2), V, T,
+                       implies_formula(F1t,F2t)) :-
+    %formula(F1),
+    %formula(F2),
+    %variable(V),
+    %term(T),
+    %formula(F1t),
+    substituted_in_formula(F1, V, T, F1t),
+    %formula(F2t),
+    substituted_in_formula(F2, V, T, F2t).
+substituted_in_formula(iff_formula(F1,F2), V, T, iff_formula(F1t,F2t)) :-
+    %formula(F1),
+    %formula(F2),
+    %variable(V),
+    %term(T),
+    %formula(F1t),
+    substituted_in_formula(F1, V, T, F1t),
+    %formula(F2t),
+    substituted_in_formula(F2, V, T, F2t).
+substituted_in_formula(forall_formula(V,F), V, T, forall_formula(V,F)) :-
+    variable(V),
+    formula(F),
+    term(T).
+% NOTE In the following rule we do not assume that a substitution for a 
+% variable that is not free in a formula doesn't change it. However, it is
+% implicitly assumed, as this is the intuition behind this definition
+% nevertheless. Consider revising.
+substituted_in_formula(forall_formula(V1,F), V, T, forall_formula(V1,F1)) :-
+    %variable(V1),
+    %formula(F),
+    %variable(V),
+    %term(T),
+    nonequal_variables(V, V1),
+    %formula(F1),
+    substituted_in_formula(F, V, T, F1),
+    not_free_in_formula(V, F).
+% NOTE In the following rule (or, alternatively, in the previous one), the
+% assumptions can be strengthened so as to make the rules mutually exclusive.
+% However, as far as i see, this requires the definition of a variable being
+% *free* in formula / term.
+substituted_in_formula(forall_formula(V1,F), V, T, forall_formula(V1,F1)) :-
+    %variable(V1),
+    %formula(F),
+    %variable(V),
+    %term(T),
+    nonequal_variables(V, V1),
+    %formula(F1),
+    substituted_in_formula(F, V, T, F1),
+    not_free_in_term(V1, T).
+substituted_in_formula(exists_formula(V,F), V, T, exists_formula(V,F)) :-
+    variable(V),
+    formula(F),
+    term(T).
+% NOTE In the following rule we do not assume that a substitution for a 
+% variable that is not free in a formula doesn't change it. However, it is
+% implicitly assumed, as this is the intuition behind this definition
+% nevertheless. Consider revising.
+substituted_in_formula(exists_formula(V1,F), V, T, exists_formula(V1,F1)) :-
+    %variable(V1),
+    %formula(F),
+    %variable(V),
+    %term(T),
+    nonequal_variables(V, V1),
+    %formula(F1),
+    substituted_in_formula(F, V, T, F1),
+    not_free_in_formula(V, F).
+% NOTE In the following rule (or, alternatively, in the previous one), the
+% assumptions can be strengthened so as to make the rules mutually exclusive.
+% However, as far as i see, this requires the definition of a variable being 
+% *free* in formula / term.
+substituted_in_formula(exists_formula(V1,F), V, T, exists_formula(V1,F1)) :-
+    %variable(V1),
+    %formula(F),
+    %variable(V),
+    %term(T),
+    nonequal_variables(V, V1),
+    %formula(F1),
+    substituted_in_formula(F, V, T, F1),
+    not_free_in_term(V1, T).
+
+% Natural Deduction (with localized hypotheses, without proof terms)
+% ------------------------------------------------------------------
+
+% NOTE The following predicate's name is intended to capture the meaning of
+% the judgement. It can be also refered to as 'derivability' but in Horn logic
+% every aspect of the language is just as much 'derivable'.
+% Hypothesis Rule (a.k.a Assumption Rule):
+contextually_true(Fs, F) :-
+    %formula_list(Fs),
+    %formula(F),
+    member_of_formula_list(F, Fs).
+%
+% true_formula-I:
+contextually_true(Fs, true_formula) :-
+    formula_list(Fs).
+%
+% false_formula-E:
+contextually_true(Fs, F) :-
+    %formula_list(Fs),
+    formula(F),
+    contextually_true(Fs, false_formula).
+%
+% not_formula-I:
+contextually_true(Fs, not_formula(F)) :-
+    % TODO It appears that the following 2 assumptions are redundant (unsure):
+    formula_list(Fs),
+    formula(F),
+    contextually_true(append_formula_formula_list(Fs,F), false_formula).
+% not_formula-E:
+contextually_true(Fs, false_formula) :-
+    %formula_list(Fs),
+    %formula(F),
+    contextually_true(Fs, F),
+    contextually_true(Fs, not_formula(F)).
+%
+% and_formula-I:
+contextually_true(Fs, and_formula(F1,F2)) :-
+    %formula_list(Fs),
+    %formula(F1),
+    %formula(F2),
+    contextually_true(Fs, F1),
+    contextually_true(Fs, F2).
+% and_formula-E(1):
+contextually_true(Fs, F1) :-
+    %formula_list(Fs),
+    % TODO It appears that the following 2 assumptions are redundant (unsure):
+    formula(F1),
+    formula(F2),
+    contextually_true(Fs, and_formula(F1,F2)).
+% and_formula-E(2):
+contextually_true(Fs, F2) :-
+    %formula_list(Fs),
+    % TODO It appears that the following 2 assumptions are redundant (unsure):
+    formula(F1),
+    formula(F2),
+    contextually_true(Fs, and_formula(F1,F2)).
+%
+% or_formula-I(1):
+contextually_true(Fs, or_formula(F1,F2)) :-
+    %formula_list(Fs),
+    %formula(F1),
+    formula(F2),
+    contextually_true(Fs, F1).
+% or_formula-I(2):
+contextually_true(Fs, or_formula(F1,F2)) :-
+    %formula_list(Fs),
+    formula(F1),
+    %formula(F2),
+    contextually_true(Fs, F2).
+% or_formula-E:
+contextually_true(Fs, F) :-
+    %formula_list(Fs),
+    % TODO It appears that the following 2 assumptions are redundant (unsure):
+    formula(F1),
+    formula(F2),
+    %formula(F),
+    contextually_true(Fs, or_formula(F1,F2)),
+    contextually_true(append_formula_formula_list(Fs,F1), F),
+    contextually_true(append_formula_formula_list(Fs,F2), F).
+%
+% implies_formula-I:
+contextually_true(Fs, implies_formula(F1,F2)) :-
+    % TODO It appears that the following 2 assumptions are redundant (unsure):
+    formula_list(Fs),
+    formula(F1),
+    %formula(F2),
+    contextually_true(append_formula_formula_list(Fs,F1), F2).
+% implies_formula-E:
+contextually_true(Fs, F2) :-
+    %formula_list(Fs),
+    %formula(F1),
+    % TODO It appears that the following assumption is redundant (unsure):
+    formula(F2),
+    contextually_true(Fs, implies_formula(F1,F2)),
+    contextually_true(Fs, F1).
+%
+% iff_formula-I:
+contextually_true(Fs, iff_formula(F1,F2)) :-
+    % TODO It appears that the following assumption is redundant (unsure):
+    formula_list(Fs),
+    %formula(F1),
+    %formula(F2),
+    contextually_true(append_formula_formula_list(Fs,F1), F2),
+    contextually_true(append_formula_formula_list(Fs,F2), F1).
+% iff_formula-E(1):
+contextually_true(Fs, F2) :-
+    %formula_list(Fs),
+    %formula(F1),
+    % TODO It appears that the following assumption is redundant (unsure):
+    formula(F2),
+    contextually_true(Fs, iff_formula(F1,F2)),
+    contextually_true(Fs, F1).
+% iff_formula-E(2):
+contextually_true(Fs, F1) :-
+    %formula_list(Fs),
+    % TODO It appears that the following assumption is redundant (unsure):
+    formula(F1),
+    %formula(F2),
+    contextually_true(Fs, iff_formula(F1,F2)),
+    contextually_true(Fs, F2).
+%
+% forall_formula-I:
+contextually_true(Fs, forall_formula(V,F)) :-
+    %formula_list(Fs),
+    %variable(V),
+    %formula(F),
+    %variable(V1),
+    not_free_in_formula_list(V1, Fs),
+    equal_to_or_not_free_in_formula(V1, V, F),
+    %formula(F1),
+    substituted_in_formula(F, V, variable_term(V1), F1),
+    contextually_true(Fs, F1).
+% forall_formula-E:
+contextually_true(Fs, F1) :-
+    %formula_list(Fs),
+    %variable(V),
+    %formula(F),
+    contextually_true(Fs, forall_formula(V,F)),
+    %term(T),
+    %formula(F1),
+    substituted_in_formula(F, V, T, F1).
+%
+% exists_formula-I:
+contextually_true(Fs, exists_formula(V,F)) :-
+    %formula_list(Fs),
+    %variable(V),
+    %formula(F),
+    %term(T),
+    %formula(F1),
+    substituted_in_formula(F, V, T, F1),
+    contextually_true(Fs, F1).
+% exists_formula-E:
+contextually_true(Fs, F2) :-
+    %formula_list(Fs),
+    %variable(V),
+    %formula(F),
+    contextually_true(Fs, exists_formula(V,F)),
+    %variable(V1),
+    not_free_in_formula_list(V1, Fs),
+    equal_to_or_not_free_in_formula(V1, V, F),
+    %formula(F1),
+    substituted_in_formula(F, V, variable_term(V1), F1),
+    %formula(F2),
+    not_free_in_formula(V1, F2),
+    contextually_true(append_formula_formula_list(Fs,F1), F2).
+%
+% equals_formula-I:
+contextually_true(Fs, equals_formula(T,T)) :-
+    formula_list(Fs),
+    term(T).
+% equals_formula-E(1):
+contextually_true(Fs, F2) :-
+    %formula_list(Fs),
+    %term(T1),
+    %term(T2),
+    contextually_true(Fs, equals_formula(T1,T2)),
+    %formula(F),
+    %variable(V),
+    %formula(F1),
+    substituted_in_formula(F, V, T1, F1),
+    %formula(F2),
+    substituted_in_formula(F, V, T2, F2),
+    contextually_true(Fs, F1).
+% equals_formula-E(2):
+contextually_true(Fs, F1) :-
+    %formula_list(Fs),
+    %term(T1),
+    %term(T2),
+    contextually_true(Fs, equals_formula(T1,T2)),
+    %formula(F),
+    %variable(V),
+    %formula(F1),
+    substituted_in_formula(F, V, T1, F1),
+    %formula(F2),
+    substituted_in_formula(F, V, T2, F2),
+    contextually_true(Fs, F2).
+%
+% Proof by Contradiction (a.k.a Rule of Indirect Proof):
+contextually_true(Fs, F) :-
+    % TODO It appears that the following 2 assumptions are redundant (unsure):
+    formula_list(Fs),
+    formula(F),
+    contextually_true(append_formula_formula_list(Fs,not_formula(F)), 
+                      false_formula).
+
+% Defined Quantifiers
+% -------------------
+
+unique_formula_is(V, F, V1, forall_formula(V,forall_formula(V1,implies_formula(and_formula(F,F1),equals_formula(variable_term(V),variable_term(V1)))))) :-
+    %variable(V),
+    %formula(F),
+    %variable(V1),
+    nonequal_variables(V1, V),
+    not_free_in_formula(V1, F),
+    %formula(F1),
+    substituted_in_formula(F, V, variable_term(V1), F1).
+
+exists_one_formula_is(V, F, V1, and_formula(exists_formula(V,F),Unq)) :-
+    %variable(V),
+    %formula(F),
+    %variable(V1),
+    %formula(Unq),
+    unique_formula_is(V, F, V1, Unq).
+
+% Comments
+% --------
+
+% TODO Knowledge base is not sufficiently tested. Particularly, re-examine
+% natural deduction, incl. strong soundness and completeness.
+
+% NOTE In our natural deduction proof system, contexts do *not* to grow or 
+% change during forward proof (even the order of the
+% hypotheses and their multiplicity). For this reason, in `fol-2.hn`,
+% we include *admissible* (derived) structural rules for the contexts,
+% which can be turned on and off according to a configuration fact. Note that, 
+% in contrast, this property of the bare proof system, makes backward proof 
+% search more efficient (which is what we get from backward chaining strategy 
+% in our present implementation of Horn logic).
+
+% NOTE Considering the side conditions on the auxiliary variable ("parameter")
+% in exists_formula-E -- the variable needs to be chosen so that it is *not*
+% free in all other hypotheses, from *both* sequents. In other systems 
+% (natural deduction with non-localized hypotheses), it is enough to assume 
+% this for the second sequent if we took the "union"/concatenation of contexts. 
+% In order to support the less-restrictive 
+% (stronger) inference rule, it seems that we need to explictly include another
+% admissible (derived) rule: one that allows substitution in sequents (or 
+% something similar) -- so as to justify, given the less-restrictive 
+% assumptions, the possibiliy of replacing the auxiliary
+% variable with another one that conforms to the present system's 
+% more-restrictive rule (and then use structural rules on contexts as needed,
+% esp. Weakening). Note that forall_formula-I does *not* seem to exhibit this
+% issue.
+% TODO Settle on the proper way to directly reduce the less-restrictive rule to 
+% ours.
