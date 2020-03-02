@@ -18,8 +18,9 @@
 
 # ___File purpose:___ Invoked by `run.sh` and assembles everything together.
 # (1) Creating a temporary Prolog script that loads `zfc-shell.pl`,
-# and an optional Prolog script `<prolog_file>`. (2) Invoking horc on the 
-# temporary script.
+# and an optional Prolog script `<prolog_file>`. (2) Invoking horc on
+# the knowledge base `zfc.hn` (which loads the other knowledge bases),
+# accompanied by the temporary Prolog script from (1).
 
 FILENAME_PROLOG="$1"
 

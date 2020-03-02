@@ -16,7 +16,7 @@
 
 # ___File name:___ run.sh
 
-# ___File purpose:___ Interface script exectued first (top) when a Docker 
+# ___File purpose:___ Interface script executed first (top) when a Docker 
 # container starts, and receiving its parameters from the command line.
 
 echo "Running mai..."

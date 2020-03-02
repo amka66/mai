@@ -17,7 +17,8 @@
 % ___File name:___ zfc.hn
 
 % ___File purpose:___ A Horn knowledge base defining the primitive language
-% and axioms of the Zermelo-Fraenkel set theory with Choice (ZFC).
+% and axioms of the Zermelo-Fraenkel set theory with Choice (ZFC). It is a 
+% starting point for mathematical expositions of type II (per `fol-4.hn`).
 
 % Horn Knowledge Base
 % ===================
@@ -452,7 +453,7 @@ primitive_axiom(
 % --------
 
 % TODO Knowledge base is not sufficiently tested. Verify again that the axioms
-% are equivalent to standard ZFC axioms (Enderton?). Especially re-consider
+% are equivalent to standard ZFC axioms (Enderton's?). Especially re-consider
 % Separation, Replacement, and AC.
 
 % NOTE When we use a uniqueness / exists-one defined quantifier, we include
@@ -470,9 +471,9 @@ primitive_axiom(
 
 % TODO Regarding Separation and Replacement schemes, and the formulae `F` that
 % they refer to (satisfying `primitive_formula(F)`): maybe (?) we can let `F` be
-% be *any* formula. Currently a primitive axiom is limited to the primite
+% be *any* formula. Currently a primitive axiom is limited to the primitive
 % language. Does it make sense to remove this limitation? Here this may perhaps
 % work as we only extend the theory while elimination
 % condition is preserved, so there would be meta-theorems allowing to use any
 % formula in valid extensions (verify). Is that enough? Reconsider if we
-% want this (unsure), and whether it is valid.
+% want this, and whether it is valid.

@@ -19,7 +19,7 @@
 % ___File purpose:___ A Horn knowledge base defining a FOL theory including 
 % a subset of the 'non-logical' constants (i.e., a subset of the 'universal' 
 % language) and axioms, and the proper way to extend theories with theorems
-% and definitions, in case of a *finite* number of axioms (mathematical 
+% and definitions -- in case of a *finite* number of axioms (mathematical 
 % expositions of 'type I').
 
 % Horn Knowledge Base
@@ -358,7 +358,7 @@ valid_extension(Th, Th2) :-
     %distinct_variable_list(Vs),
     %natural(N),
     %variable(V),
-    %vairable(V1),
+    %variable(V1),
     %formula(F1),
     %formula(F2),
     %function(Fu),

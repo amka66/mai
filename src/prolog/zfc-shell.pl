@@ -17,7 +17,8 @@
 % ___File name:___ zfc-shell.pl
 
 % ___File purpose:___ A Prolog script defining several shell (top-level) 
-% functions for doing mathematics on a computer.
+% functions to support for mathematical expositions of type II (per 
+% `fol-4.hn`).
 
 % Prolog Script
 % =============
@@ -78,14 +79,14 @@ thm(Y) :-
     hornadd(valid_extension_alt(Th2), 3),
     set(Th2).
 
-% Substep: contextually true with axioms.
+% Sub-step: contextually true with axioms.
 true(Y) :-
     get(form_theory(Cs,Fs)),
     sugar2formula(Y, F),
     hornadd(contextually_true_with_axioms(Fs, F), 100000000).
 
 % NOTE The following is a variant to `true/1` where theorems *aren't* proved!
-% Substep: skip contextually true with axioms.
+% Sub-step: skip contextually true with axioms.
 skip_true(Y) :-
     get(form_theory(Cs,Fs)),
     sugar2formula(Y, F),
@@ -136,6 +137,3 @@ defn_f2(Y, A, Zs, X) :-
                                                    VsAsTs, D, Th2), 100000000),
     hornadd(valid_extension_alt(Th2), 3),
     set(Th2).
-
-% Comments
-% --------

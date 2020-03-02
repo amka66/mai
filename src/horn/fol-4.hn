@@ -17,8 +17,8 @@
 % ___File name:___ fol-4.hn
 
 % ___File purpose:___ A Horn knowledge base defining the proper way to extend
-% FOL theories with theorems and definitions, in case of a possibly *infinite*
-% number of axioms (mathematical expositions of 'type II').
+% FOL theories with theorems and definitions -- in case of a possibly 
+% *infinite* number of axioms (mathematical expositions of 'type II').
 
 % Horn Knowledge Base
 % ========//=========
@@ -36,7 +36,8 @@
 % Primitives Configuration
 % ------------------------
 
-% TODO Add the following predicate under the assertions mentioned:
+% NOTE In order to use this knowledge base, add the following predicate under 
+% the assertions mentioned:
 %primitive_distinct_constant_arity_list( ...1... ).
 % Assertion (1): ...1... satisfies `distinct_constant_arity_list( ...1... )`.
 % Assertion (2): there is exactly one primitive distinct constant arity list.
@@ -51,7 +52,8 @@ primitive_formula(F) :-
     %formula(F),
     formula_for(F, Cs).
 
-% TODO Add the following predicate under the assertion mentioned:
+% NOTE In order to use this knowledge base, add the following predicate under 
+% the assertion mentioned:
 %primitive_axiom/1.
 % Assertion: any ...2... such that `primitive_axiom( ...2... )` must satisfy
 % `primitive_formula( ...2... )`.
@@ -283,7 +285,7 @@ valid_extension_alt(Th2) :-
 % in `fol-2.hn`, and consider perhaps adding more specific admissible rules
 % corresponding directly to the discussion above (not sure that it is needed).
 % Verify that `contextually_true_with_axioms/2` is justified (semantically;
-% see Endrton's Mathematical Introduction to Logic).
+% see Enderton's Mathematical Introduction to Logic).
 
 % TODO Verify again that in ZFC, we obtain the appropriate meta-theorems allowing 
 % to extend the axioms schemes that are

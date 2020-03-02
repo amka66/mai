@@ -16,8 +16,8 @@
 
 % ___File name:___ zfc-concrete.pl
 
-% ___File purpose:___ A Prolog script introducing concrete syntax and syntactic
-% sugar for FOL and ZFC, and the translation to abstract syntax.
+% ___File purpose:___ A Prolog script defining concrete syntax and syntactic
+% sugar for FOL and ZFC, and the conversion to and from abstract syntax.
 
 % Prolog Script
 % =============

@@ -16,7 +16,8 @@
 
 % ___File name:___ set-theory.hn
 
-% ___File purpose:___ A Prolog script formalizing set theory in mai.
+% ___File purpose:___ A Prolog script containing a formal mathematical 
+% exposition of set theory in mai.
 
 % Prolog Script
 % =============
@@ -104,7 +105,7 @@
 
 % NOTE The following is just a quick test of 
 % `step_function_definition_second_form` (i.e., `defn_f2`).
-% TOOD Remove.
+% TODO Remove.
 :- defn_f2(x -- singleton@[x] # unordered@[x,x],
            singleton,
            [x],

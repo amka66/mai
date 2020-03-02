@@ -16,9 +16,10 @@
 
 % ___File name:___ fol-2.hn
 
-% ___File purpose:___ A Horn knowledge base introducing a set of admissible
-% (derived) rules for proving theorems, and later extending FOL theories with
-% theorems and definitions.
+% ___File purpose:___ A Horn knowledge base introducing a set of admissible 
+% (derived) rules that can be used for proving theorems. Some of the rules are
+% intended to support the extension of FOL theories with theorems and 
+% definitions, per `fol-3.hn` and `fol-4.hn`.
 
 % Horn Knowledge Base
 % ========//=========
@@ -88,7 +89,7 @@ contextually_true(append_formula_formula_list(Fs,F1), F) :-
     %formula(F),
     contextually_true(append_formula_formula_list(append_formula_formula_list(Fs,F1),F1), F).
 %
-% Weakening (a.k.a Thining) (admissible)
+% Weakening (a.k.a Thinning) (admissible)
 contextually_true(append_formula_formula_list(Fs,F1), F) :-
     include_admissible_rules(true_formula),
     %formula_list(Fs),
@@ -432,7 +433,7 @@ predicate_arity_not_in_formula_list(P, N, append_formula_formula_list(Fs,F)) :-
     predicate_arity_not_in_formula_list(P, N, Fs),
     predicate_arity_not_in_formula(P, N, F).
 
-% Definition of a Predicate (non-logical cosntant)
+% Definition of a Predicate (non-logical constant)
 % ------------------------------------------------
 
 % The following predicate indicates the set of terms that capture the
@@ -491,7 +492,7 @@ contextually_true(append_formula_formula_list(Fs,D), iff_formula(F1,F2)) :-
     formula(F2), % TODO Probably superfluous once the translation is defined.
     predicate_eliminated_formula_is(P, F, Vs, F1, F2).
 
-% Definition of a Function (non-logical cosntant)
+% Definition of a Function (non-logical constant)
 % -----------------------------------------------
 
 % The following predicate indicates the set of terms that capture the
@@ -570,7 +571,7 @@ contextually_true(append_formula_formula_list(Fs,D), iff_formula(F4,F5)) :-
     formula(F5), % TODO Probably superfluous once the translation is defined.
     function_eliminated_formula_is(Fu, F, Vs, V, F4, F5).
 
-% Definition of a Function (non-logical cosntant) -- 2nd Form
+% Definition of a Function (non-logical constant) -- 2nd Form
 % -----------------------------------------------------------
 
 % The following predicate indicates the set of terms that capture the
@@ -665,7 +666,7 @@ contextually_true(append_formula_formula_list(Fs,D), iff_formula(F1,F2)) :-
 % system. It seems to require changing variables *during* the inductive proof
 % (in forall_formula-I and exists_formula-E), maybe by strengthening the
 % inductive hypotheses, or some other way (?). Or, this might be related
-% to a substituion property of sequents. And the latter might be related to the
+% to a substitution property of sequents. And the latter might be related to the
 % additional derived rule (mentioned in `fol-1.hn`) that we need in order to
 % reduce the less-restrictive (stronger) exists_formula-E formulation to the
 % existing one.

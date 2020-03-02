@@ -17,9 +17,10 @@
 % ___File name:___ fol-1.hn
 
 % ___File purpose:___ A Horn knowledge base defining classical first-order
-% logic with equality (FOL) -- both syntax and a proof system called natural 
-% deduction (ND). Here we consider the 'universal' language, with *all* 
-% 'non-logical' constants available (whereas a FOL theory selects some).
+% logic with equality (FOL) -- both syntax, operations on syntax, and a proof 
+% system called natural deduction (ND). Here we consider the 'universal' 
+% language, with *all* 'non-logical' constants available (whereas a FOL theory 
+% selects some).
 
 % Horn Knowledge Base
 % ===================
@@ -523,8 +524,8 @@ substituted_in_formula(exists_formula(V1,F), V, T, exists_formula(V1,F1)) :-
 % ------------------------------------------------------------------
 
 % NOTE The following predicate's name is intended to capture the meaning of
-% the judgement. It can be also refered to as 'derivability' but in Horn logic
-% every aspect of the language is just as much 'derivable'.
+% the judgement. It can be also referred to as 'derivability' but in Horn logic
+% every aspect of the language is just as 'derivable'.
 % Hypothesis Rule (a.k.a Assumption Rule):
 contextually_true(Fs, F) :-
     %formula_list(Fs),
@@ -764,10 +765,10 @@ exists_one_formula_is(V, F, V1, and_formula(exists_formula(V,F),Unq)) :-
 % (natural deduction with non-localized hypotheses), it is enough to assume 
 % this for the second sequent if we took the "union"/concatenation of contexts. 
 % In order to support the less-restrictive 
-% (stronger) inference rule, it seems that we need to explictly include another
+% (stronger) inference rule, it seems that we need to explicitly include another
 % admissible (derived) rule: one that allows substitution in sequents (or 
 % something similar) -- so as to justify, given the less-restrictive 
-% assumptions, the possibiliy of replacing the auxiliary
+% assumptions, the possibility of replacing the auxiliary
 % variable with another one that conforms to the present system's 
 % more-restrictive rule (and then use structural rules on contexts as needed,
 % esp. Weakening). Note that forall_formula-I does *not* seem to exhibit this
