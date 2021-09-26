@@ -91,6 +91,7 @@ File | Directory | Description
 `Dockerfile` | `.` | Docker script for building a Docker image.
 `.dockerignore` | `.` | A list of files to be excluded in Dockerfile's copy command.
 `.gitignore` | `.` | A list of files to be excluded from Git.
+`.gitattributes` | `.` | File extensions with their associated languages.
 `mai.bib` | `.` | BibTeX file containing project's bibliography.
 `LICENSE` | `.` | License file (plain text).
 `README.md` | `.` | This file (Markdown).
