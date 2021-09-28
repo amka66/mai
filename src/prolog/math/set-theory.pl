@@ -25,115 +25,98 @@
 % Primitives
 % ----------
 
-:- prim(
-      [(-=)!2]
+:- primitive_constants(
+      [-=!2]
    ).
 
 % Extensionality and Subsets
 % --------------------------
 
-:- thm_skip_true(
+:- theorem_skip_proof(  % axiom
       'A' .. 'B' .. (x .. x -= 'A' iff x -= 'B') implies 'A' # 'B'
-   ). % Axiom.
+   ).
 
-:- thm_skip_true(
+:- theorem_skip_proof(
       'A' .. 'B' .. 'A' # 'B' iff (x .. x -= 'A' iff x -= 'B')
    ).
 
-:- defn_p(
-      'A' .. 'B' .. subseteq!['A','B'] iff (x .. x -= 'A' implies x -= 'B'),
-      subseteq, 
-      ['A','B'],
-      x .. x -= 'A' implies x -= 'B'
+:- definition_predicate( subseteq, ['A','B'],
+      x .. x -= 'A' implies x -= 'B',
+      'A' .. 'B' .. subseteq!['A','B'] iff (x .. x -= 'A' implies x -= 'B')
    ).
 
-:- defn_p(
-      'A' .. 'B' .. subsetneq!['A','B'] iff subseteq!['A','B'] and not 'A' # 'B',
-      subsetneq, 
-      ['A','B'],
-      subseteq!['A','B'] and not 'A' # 'B'
+:- definition_predicate( subsetneq, ['A','B'],
+      subseteq!['A','B'] and not 'A' # 'B',
+      'A' .. 'B' .. subsetneq!['A','B'] iff subseteq!['A','B'] and not 'A' # 'B'
    ).
 
-:- thm_skip_true(
+:- theorem_skip_proof(
       'A' .. subseteq!['A','A']
    ).
 
-:- thm_skip_true(
+:- theorem_skip_proof(
       'A' .. 'B' .. subseteq!['A','B'] and subseteq!['B','A'] implies 'A' # 'B'
    ).
 
-:- thm_skip_true(
+:- theorem_skip_proof(
       'A' .. 'B' .. 'C' .. subseteq!['A','B'] and subseteq!['B','C'] implies subseteq!['A','C']
    ).
 
-:- thm_skip_true(
+:- theorem_skip_proof(
       'A' .. 'B' .. 'A' # 'B' iff subseteq!['A','B'] and subseteq!['B','A']
    ).
 
 % Empty Set
 % ---------
 
-:- thm_skip_true(
+:- theorem_skip_proof(  % axiom
       'A' :: not (x :: x -= 'A')
-   ). % Axiom.
-
-:- Y = ('A' :: not (x :: x -= 'A')) and 
-       ('A' .. 'B' .. not (x :: x -= 'A') and not (x :: x -= 'B') implies 'A' # 'B'),
-   sugar2formula(Y, F1),
-   atom2variable('A', V),
-   sugar2formula(not (x :: x -= 'A'), F),
-   atom2variable('B', V1),
-   horn(exists_one_formula_is(V, F, V1, F1), 100000000),
-   formula2sugar(F1, Y),  % TODO Why do we need this?
-   thm_skip_true(Y).
-
-:- defn_f(
-      not (x :: x -= emptyset@[]),
-      emptyset,
-      [],
-      'A',
-      not (x :: x -= 'A'),
-      'B'
    ).
 
-:- thm_skip_true(
+:- theorem_skip_proof(
+      ('A' :: not (x :: x -= 'A')) and 
+      ('A' .. 'B' .. not (x :: x -= 'A') and
+                     not (x :: x -= 'B') implies 'A' # 'B')
+   ).
+
+:- definition_function( emptyset, [],
+      'A', not (x :: x -= 'A'),
+      'B',
+      not (x :: x -= emptyset@[])
+   ).
+
+:- theorem_skip_proof(
       'A' .. 'A' # emptyset@[] iff not (x :: x -= 'A')
    ).
 
-:- thm_skip_true(
+:- theorem_skip_proof(
       'A' .. subseteq![emptyset@[],'A']
    ).
 
 % Unordered Pairs
 
-:- thm_skip_true(
+:- theorem_skip_proof(  % axiom
       x .. y .. 'A' :: z .. z -= 'A' iff z # x or z # y
-   ). % Axiom.
+   ).
 
-:- atom2variable('A', V),
-   sugar2formula(z .. z -= 'A' iff z # x or z # y, F),
-   atom2variable('B', V1),
-   horn(exists_one_formula_is(V, F, V1, F1), 100000000),
-   formula2sugar(F1, Y),
-   thm_skip_true(x .. y .. Y).
+:- theorem_skip_proof(
+      x .. y .. ('A' :: z .. z -= 'A' iff z # x or z # y) and
+                ('A' .. 'B' .. (z .. z -= 'A' iff z # x or z # y) and
+                               (z .. z -= 'B' iff z # x or z # y) implies 'A' # 'B')
+   ).
 
-:- defn_f(
-      x .. y .. z .. z -= unordered@[x,y] iff z # x or z # y,
-      unordered,
-      [x,y],
-      'A',
-      z .. z -= 'A' iff z # x or z # y,
-      'B'
+:- definition_function( unordered, [x,y],
+      'A', z .. z -= 'A' iff z # x or z # y,
+      'B',
+      x .. y .. z .. z -= unordered@[x,y] iff z # x or z # y
    ).
 
 % NOTE The following is just a quick test of 
-% `step_function_definition_second_form` (i.e., `defn_f2`).
+% `step_function_definition_second_form` (i.e., `definition_function2`).
 % TODO Remove.
-:- defn_f2(
-      x .. singleton@[x] # unordered@[x,x],
-      singleton,
-      [x],
-      unordered@[x,x]
+:- definition_function_second_form( singleton, [x],
+      unordered@[x,x],
+      x .. singleton@[x] # unordered@[x,x]
    ).
 
 % Comments

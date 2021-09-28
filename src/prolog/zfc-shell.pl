@@ -64,7 +64,7 @@ get(Xs, Ys) :-
 % -----------------
 
 % Step: primitive theory.
-prim(Xs) :-
+primitive_constants(Xs) :-
     sugarlist2constalist(Xs, Cs),
     sugarlist2formulalist([], Fs),
     hornadd(primitive_theory(form_theory(Cs,Fs)), 100000000),
@@ -72,7 +72,7 @@ prim(Xs) :-
     set(form_theory(Cs,Fs)).
 
 % Step: theorem inclusion.
-thm(Y) :-
+theorem(Y) :-
     get(Th),
     sugar2formula(Y, F),
     hornadd(theorem_inclusion_yields_alt(Th, F, Th2), 100000000),
@@ -94,45 +94,45 @@ skip_true(Y) :-
     horn(formula(F), 100000000),
     skiphornadd(contextually_true_with_axioms(Fs, F)).
 
-% NOTE The following is a variant to `thm` where theorems *aren't* proved!
+% NOTE The following is a variant to `theorem/1` where theorems *aren't* proved!
 % Step: skip contextually true with axioms and theorem inclusion.
-thm_skip_true(Y) :-
+theorem_skip_proof(Y) :-
     skip_true(Y),
-    thm(Y).
+    theorem(Y).
 
 % Step: predicate definition.
-defn_p(Y, A, Zs, X) :-
+definition_predicate(A, Zs, X, Y) :-
     get(Th),
-    sugar2formula(Y, D),
     atom2predicate(A, P),
     sugarlist2variablelist(Zs, Vs),
     sugar2formula(X, F),
+    sugar2formula(Y, D),
     hornadd(predicate_definition_yields_alt(Th, F, Vs, N, P, VsAsTs, D, Th2),
                                             100000000),
     hornadd(valid_extension_alt(Th2), 3),
     set(Th2).
 
 % Step: function definition.
-defn_f(Y, A, Zs, Z, X, Z1) :-
+definition_function(A, Zs, Z, X, Z1, Y) :-
     get(Th),
-    sugar2formula(Y, D),
     atom2function(A, Fu),
     sugarlist2variablelist(Zs, Vs),
     atom2variable(Z, V),
     sugar2formula(X, F),
     atom2variable(Z1, V1),
+    sugar2formula(Y, D),
     hornadd(function_definition_yields_alt(Th, F, Vs, N, V, V1, F1, F2, Fu,
                                            VsAsTs, F3, D, Th2), 100000000),
     hornadd(valid_extension_alt(Th2), 3),
     set(Th2).
 
 % Step: function definition, 2nd form.
-defn_f2(Y, A, Zs, X) :-
+definition_function_second_form(A, Zs, X, Y) :-
     get(Th),
-    sugar2formula(Y, D),
     atom2function(A, Fu),
     sugarlist2variablelist(Zs, Vs),
     sugar2term(X, T),
+    sugar2formula(Y, D),
     hornadd(function_definition_second_form_yields_alt(Th, T, Vs, N, Fu,
                                                    VsAsTs, D, Th2), 100000000),
     hornadd(valid_extension_alt(Th2), 3),
