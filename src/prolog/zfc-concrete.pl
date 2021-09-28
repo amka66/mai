@@ -31,7 +31,7 @@
 % ---------------
 
 % FOL:
-:- op(650, xfy, [--, ::]). % Namely, 'for all ... holds ...' and
+:- op(650, xfy, [.., ::]). % Namely, 'for all ... holds ...' and
                            % 'there exists ... such that ...'.
 :- op(645, xfy, [implies, iff]).
 :- op(640, yfx, [or]).
@@ -252,7 +252,7 @@ sugar2formula(implies(Sugar1,Sugar2), implies_formula(F1,F2)) :-
 sugar2formula(iff(Sugar1,Sugar2), iff_formula(F1,F2)) :-
     sugar2formula(Sugar1, F1),
     sugar2formula(Sugar2, F2).
-sugar2formula('--'(A,Sugar), forall_formula(V,F)) :-
+sugar2formula('..'(A,Sugar), forall_formula(V,F)) :-
     atom2variable(A, V),
     sugar2formula(Sugar, F).
 sugar2formula('::'(A,Sugar), exists_formula(V,F)) :-
@@ -297,7 +297,7 @@ formula2sugar(implies_formula(F1,F2), implies(Sugar1,Sugar2)) :-
 formula2sugar(iff_formula(F1,F2), iff(Sugar1,Sugar2)) :-
     formula2sugar(F1, Sugar1),
     formula2sugar(F2, Sugar2).
-formula2sugar(forall_formula(V,F), '--'(A,Sugar)) :-
+formula2sugar(forall_formula(V,F), '..'(A,Sugar)) :-
     variable2atom(V, A),
     formula2sugar(F, Sugar).
 formula2sugar(exists_formula(V,F), '::'(A,Sugar)) :-
