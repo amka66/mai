@@ -26,7 +26,7 @@
 % ----------
 
 :- primitive_constants(
-      [-=!2]
+      [(-=)!2]
    ).
 
 % Extensionality and Subsets
