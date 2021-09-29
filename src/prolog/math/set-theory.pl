@@ -32,10 +32,9 @@
 % Extensionality and Subsets
 % --------------------------
 
-:- theorem_skip_proof(  % axiom
+:- theorem_skip_proof(  % Axiom of Extensionality
       'A' .. 'B' .. (x .. x -= 'A' iff x -= 'B') implies 'A' # 'B'
    ).
-
 :- theorem_skip_proof(
       'A' .. 'B' .. 'A' # 'B' iff (x .. x -= 'A' iff x -= 'B')
    ).
@@ -45,19 +44,17 @@
       'A' .. 'B' .. subseteq!['A','B'] iff (x .. x -= 'A' implies x -= 'B')
    ).
 
-:- definition_predicate( subsetneq, ['A','B'],
+:- definition_predicate( subsetneqq, ['A','B'],
       subseteq!['A','B'] and not 'A' # 'B',
-      'A' .. 'B' .. subsetneq!['A','B'] iff subseteq!['A','B'] and not 'A' # 'B'
+      'A' .. 'B' .. subsetneqq!['A','B'] iff subseteq!['A','B'] and not 'A' # 'B'
    ).
 
 :- theorem_skip_proof(
       'A' .. subseteq!['A','A']
    ).
-
 :- theorem_skip_proof(
       'A' .. 'B' .. subseteq!['A','B'] and subseteq!['B','A'] implies 'A' # 'B'
    ).
-
 :- theorem_skip_proof(
       'A' .. 'B' .. 'C' .. subseteq!['A','B'] and subseteq!['B','C'] implies subseteq!['A','C']
    ).
@@ -69,7 +66,7 @@
 % Empty Set
 % ---------
 
-:- theorem_skip_proof(  % axiom
+:- theorem_skip_proof(  % Axiom of Empty Set
       'A' :: not (x :: x -= 'A')
    ).
 
@@ -94,8 +91,9 @@
    ).
 
 % Unordered Pairs
+% ---------------
 
-:- theorem_skip_proof(  % axiom
+:- theorem_skip_proof(  % Axiom of Unordered Pair
       x .. y .. 'A' :: z .. z -= 'A' iff z # x or z # y
    ).
 
@@ -111,6 +109,19 @@
       x .. y .. z .. z -= unordered@[x,y] iff z # x or z # y
    ).
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 % NOTE The following is just a quick test of 
 % `step_function_definition_second_form` (i.e., `definition_function2`).
 % TODO Remove.
@@ -124,6 +135,5 @@
 
 % TODO Work in progress.
 
-% TODO Must simplify work with exists_one, and avoid Prolog code altoghether – use a fixed interface.
-% TODO Better use simplified concrete syntax for shell predicates too.
+% TODO Must simplify work with exists_one + avoid Prolog code in math files altoghether – use a fixed interface.
 % TODO Try use concrete syntax as the last layer (so shell commands are on abstract syntax) + have it flexible to include defined non-logical constants for easy writing!

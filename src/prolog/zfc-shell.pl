@@ -32,12 +32,12 @@
 
 % Declare dynamic predicates to allow `hornadd/2` and `skiphornadd/1`:
 :- dynamic(temp_module:valid_extension_alt/1).
-:- dynamic(temp_module:contextually_true_with_axioms/2).
 :- dynamic(temp_module:primitive_theory/1).
 :- dynamic(temp_module:theorem_inclusion_yields_alt/3).
 :- dynamic(temp_module:predicate_definition_yields_alt/8).
 :- dynamic(temp_module:function_definition_yields_alt/13).
 :- dynamic(temp_module:function_definition_second_form_yields_alt/8).
+:- dynamic(temp_module:contextually_true_with_axioms/2).
 
 % Getters and setters
 % -------------------
@@ -46,19 +46,8 @@ set(Th) :-
     nb_setval(theory, Th).
 % NOTE Shouldn't be used outside this file.
 
-set(Xs, Ys) :-
-    sugarlist2constalist(Xs, Cs),
-    sugarlist2formulalist(Ys, Fs),
-    set(form_theory(Cs,Fs)).
-% NOTE Shouldn't be used outside this file.
-
 get(Th) :-
     nb_getval(theory, Th).
-
-get(Xs, Ys) :-
-    get(form_theory(Cs,Fs)),
-    constalist2sugarlist(Cs, Xs),
-    formulalist2sugarlist(Fs, Ys).
 
 % "Shell" functions
 % -----------------
@@ -74,35 +63,22 @@ primitive_constants(Xs) :-
 % Step: theorem inclusion.
 theorem(Y) :-
     get(Th),
+    horn(valid_extension_alt(Th), 1),
     sugar2formula(Y, F),
     hornadd(theorem_inclusion_yields_alt(Th, F, Th2), 100000000),
     hornadd(valid_extension_alt(Th2), 3),
     set(Th2).
 
-% Sub-step: contextually true with axioms.
-true(Y) :-
-    get(form_theory(Cs,Fs)),
-    sugar2formula(Y, F),
-    hornadd(contextually_true_with_axioms(Fs, F), 100000000).
-
-% NOTE The following is a variant to `true/1` where theorems *aren't* proved!
-% Sub-step: skip contextually true with axioms.
-skip_true(Y) :-
-    get(form_theory(Cs,Fs)),
-    sugar2formula(Y, F),
-    horn(formula_list(Fs), 100000000),
-    horn(formula(F), 100000000),
-    skiphornadd(contextually_true_with_axioms(Fs, F)).
-
+% Step: theorem inclusion skipping proof (!)
 % NOTE The following is a variant to `theorem/1` where theorems *aren't* proved!
-% Step: skip contextually true with axioms and theorem inclusion.
 theorem_skip_proof(Y) :-
-    skip_true(Y),
+    true_skip_proof(Y),
     theorem(Y).
 
 % Step: predicate definition.
 definition_predicate(A, Zs, X, Y) :-
     get(Th),
+    horn(valid_extension_alt(Th), 1),
     atom2predicate(A, P),
     sugarlist2variablelist(Zs, Vs),
     sugar2formula(X, F),
@@ -115,6 +91,7 @@ definition_predicate(A, Zs, X, Y) :-
 % Step: function definition.
 definition_function(A, Zs, Z, X, Z1, Y) :-
     get(Th),
+    horn(valid_extension_alt(Th), 1),
     atom2function(A, Fu),
     sugarlist2variablelist(Zs, Vs),
     atom2variable(Z, V),
@@ -129,6 +106,7 @@ definition_function(A, Zs, Z, X, Z1, Y) :-
 % Step: function definition, 2nd form.
 definition_function_second_form(A, Zs, X, Y) :-
     get(Th),
+    horn(valid_extension_alt(Th), 1),
     atom2function(A, Fu),
     sugarlist2variablelist(Zs, Vs),
     sugar2term(X, T),
@@ -137,3 +115,20 @@ definition_function_second_form(A, Zs, X, Y) :-
                                                    VsAsTs, D, Th2), 100000000),
     hornadd(valid_extension_alt(Th2), 3),
     set(Th2).
+
+% Sub-step: contextually true with axioms.
+true(Y) :-
+    get(form_theory(Cs,Fs)),
+    horn(valid_extension_alt(form_theory(Cs,Fs)), 1),
+    sugar2formula(Y, F),
+    horn(formula_for(F, Cs), 100000000),
+    hornadd(contextually_true_with_axioms(Fs, F), 100000000).
+
+% Sub-step: contextually true with axioms skipping proof (!)
+% NOTE The following is a variant to `true/1` where theorems *aren't* proved!
+true_skip_proof(Y) :-
+    get(form_theory(Cs,Fs)),
+    horn(valid_extension_alt(form_theory(Cs,Fs)), 1),
+    sugar2formula(Y, F),
+    horn(formula_for(F, Cs), 100000000),
+    skiphornadd(contextually_true_with_axioms(Fs, F)).
