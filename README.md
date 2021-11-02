@@ -2,7 +2,7 @@
 
 ## Abstract ##
 
-A free and open-source [proof assistant](https://en.wikipedia.org/wiki/Proof_assistant) for general mathematics.
+A free and open-source tool for [computer-assisted mathematics](https://en.wikipedia.org/wiki/Proof_assistant).
 Building on [__`horc`__](https://github.com/amka66/horc), it allows both verifying and generating formal mathematics.
 `mai` includes a comprehensive coverage of the language of mathematics and its 'standard' foundations; namely, [first-order logic](https://en.wikipedia.org/wiki/First-order_logic) and the [Zermelo–Fraenkel axioms](https://en.wikipedia.org/wiki/Zermelo%E2%80%93Fraenkel_set_theory) of set theory with [Choice](https://en.wikipedia.org/wiki/Axiom_of_choice).
 Syntactic sugar for computer-assisted mathematics is included too.
