@@ -50,10 +50,7 @@ Nevertheless, like in common mathematical practice, just a small fragment of thi
 If you have [Docker](https://en.wikipedia.org/wiki/Docker_(software)) on your computer, `mai` can be automatically downloaded and executed with *no* need for local installation (nor cloning the project repository).
 In the command prompt, simply enter the following:
 
-```$ docker container run [-it] [--rm] [-v <local_dir>:<container_dir> ...] <docker_hub_user_id>/mai [<prolog_file>]```
-
-* `<docker_hub_user_id>` (mandatory): User ID in Docker Hub that currently stores the docker image.
-Use `amka66`. __TODO__ Upload image!
+```$ docker container run [-it] [--rm] [-v <local_dir>:<container_dir> ...] amka66/mai [<prolog_file>]```
 
 * `<prolog_file>` (optional): Path to a __Prolog script__ file (optionally ending with the extension `.pl`), written in ISO-compliant or SWI-Prolog-compliant Prolog.
 If present, it is to contain a *formal mathematical exposition* in the form of Prolog queries, and possibly other content intended to extend the shell, initialize an interactive Prolog session with the user, etc.
@@ -125,8 +122,6 @@ __TODO__ Add more resources (perhaps also elaborate on the existing ones), and c
 __NOTE__ More info about `mai` and the included material may be found in commit `057ca678a1`, directory `doc`.
 
 __TODO__ Add a short paper to arXiv, and include a BibTeX entry for citation.
-
-__TODO__ Go over todos.
 
 ## License ##
 
