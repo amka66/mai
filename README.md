@@ -7,7 +7,7 @@ It includes a comprehensive coverage of the language of mathematics and its 'sta
 Syntactic sugar for computer-assisted mathematics is included too.
 
 A unique feature of `mai` is its simplicity – its mathematical foundations are implemented as a set of [rules of inference](https://en.wikipedia.org/wiki/Rule_of_inference) in a minimalist logical framework called `horc` (see [here](https://github.com/amka66/horc)).
-This implementation directly parallels textbook definitions of logic and set theory. Accordingly, we invite course instructors and authors to use `mai` as a reference definition that can be executed, scrutinized, and used in practice to verify and generate formal proof.
+This implementation directly parallels textbook definitions of logic and set theory. Therefore, it may accompany other learning material on these topics, and may serve as a reference definition that can be executed, scrutinized, and used in practice to verify and generate formal proof.
 
 To illustrate how `mai` is used, a formal mathematical exposition of set theory is included, with emphasis on building a powerful toolset for the working mathematician (work in progress). To try it out on any computer preinstalled with [Docker](https://en.wikipedia.org/wiki/Docker_(software)), write: `docker run --rm amka66/mai set-theory.pl`.
 
@@ -26,7 +26,7 @@ It includes:
   * [Zermelo-Fraenkel set theory with Choice (ZFC)](https://en.wikipedia.org/wiki/Zermelo%E2%80%93Fraenkel_set_theory) formalized in first-order logic.
   
 * These foundations are implemented in their entirety as a set of [rules of inference](https://en.wikipedia.org/wiki/Rule_of_inference) in a minimalist logical framework called `horc` (see [here](https://github.com/amka66/horc)).
-  * This implementation directly parallels textbook definitions of logic and set theory, and thus may serve as an 'official' reference definition of those topics that can be executed, 
+  * This implementation directly parallels textbook definitions of logic and set theory, and thus may serve as a reference definition of those topics that can be executed, 
   scrutinized, and used in practice.
 
   * Technically, `horc` is implemented in [Prolog](https://en.wikipedia.org/wiki/Prolog) and operates within the [SWI-Prolog](https://en.wikipedia.org/wiki/SWI-Prolog) ecosystem, and so is `mai`.
