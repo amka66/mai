@@ -97,7 +97,7 @@ File | Directory | Description
 `zfc.hn` | `src/horn` | Horn knowledge base defining the primitive language and axioms of the Zermelo-Fraenkel set theory with Choice (ZFC). It is a starting point for mathematical expositions of type II (per `fol-4.hn`).
 `zfc-concrete.pl` | `src/prolog` | Prolog script defining concrete syntax and syntactic sugar for FOL and ZFC, and the conversion to and from abstract syntax.
 `zfc-shell.pl` | `src/prolog` | Prolog script defining several shell (top-level) functions to support for mathematical expositions of type II (per `fol-4.hn`).
-`set-theory.pl` | `src/prolog/math` | Prolog script containing a formal mathematical exposition of set theory in `mai`. __TODO__ Work in progress.
+`set-theory.pl` | `src/prolog/math` | Prolog script containing a formal mathematical exposition of set theory in `mai` (work in progress).
 `run.sh` | `src/bash` | Bash script serving only as interface. Executed first (top) when a Docker container starts, and receiving its parameters from the command line.
 `create-temp-file-and-run-horc.sh` | `src/bash` | Invoked by `run.sh`, this Bash script and assembles everything together. (1) It creates a temporary Prolog script that loads `zfc-shell.pl`, and an optional Prolog script `<prolog_file>`. (2) It invokes `horc` on the knowledge base `zfc.hn` (which loads the other knowledge bases), accompanied by the temporary Prolog script from (1).
 `build-docker.sh`, `run-docker.sh`, `test-docker.sh` | `bin` | Bash utility scripts for developers: building a Docker image, running a Docker image in a container, and testing a Docker image.
@@ -124,6 +124,8 @@ Equality predicate is introduced in Section 7.1.
 [Enderton, Herbert B. Elements of Set Theory. Academic press, 1977.](https://books.google.com/books?hl=en&lr=&id=JlR-Ehk35XkC&oi=fnd&pg=PP1&dq=related:IypakaTDiLwJ:scholar.google.com)
 
 <!-- __TODO__ Add more resources (perhaps also elaborate on the existing ones), and compare to Anthony Morse's theory of sets, Metamath project, Isabelle/ZF, and Lean. -->
+
+<!-- __TODO__ Set theory is work in progress. -->
 
 <!-- __NOTE__ More info about `mai` and the included material may be found in commit `057ca678a1`, directory `doc`. -->
 
