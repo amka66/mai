@@ -75,7 +75,7 @@ Load and execute a Prolog script stored locally in `~/myfiles/linear-algebra.pl`
 * Install [Docker](https://en.wikipedia.org/wiki/Docker_(software)) (if missing).
 * To make sure it works, have `mai` verify the included exposition of set theory by executing: `docker run --rm amka66/mai set-theory.pl`.
 * As in common mathematical practice, only a fragment of the mathematical foundations underlying `mai` is typically used in formal mathematical expositions.
-  * To gain working knowledge in `mai`, examine the mathematical exposition of set theory included in [`set-theory.pl`](https://github.com/amka66/mai/blob/master/src/prolog/math/set-theory.pl). The steps in the exposition consist of shell functions (defined in `zfc-shell.pl`) and the arguments of those functions consist of the concrete syntax of logical formulae (defined in `zfc-concrete.pl`).
+  * To gain working knowledge with `mai`, examine the mathematical exposition of set theory included in [`set-theory.pl`](https://github.com/amka66/mai/blob/master/src/prolog/math/set-theory.pl). The steps in the exposition consist of shell functions (defined in `zfc-shell.pl`) and the arguments of those functions consist of the concrete syntax of logical formulae (defined in `zfc-concrete.pl`).
   * Read through [`set-theory.pl`](https://github.com/amka66/mai/blob/master/src/prolog/math/set-theory.pl) for the development of powerful set-theoretical tools for the working mathematician (work in progress).
 * For a comprehensive understanding of `mai` and its mathematical foundations start by learning `horc` (see [Where to Begin?](https://github.com/amka66/horc#where-to-begin)). Then:
   * Read through the definitions of the mathematical foundations of `mai` (implemented in `horc`): [`fol-1.hn`](https://github.com/amka66/mai/blob/master/src/horn/fol-1.hn), [`fol-2.hn`](https://github.com/amka66/mai/blob/master/src/horn/fol-2.hn), [`fol-3.hn`](https://github.com/amka66/mai/blob/master/src/horn/fol-3.hn), [`fol-4.hn`](https://github.com/amka66/mai/blob/master/src/horn/fol-4.hn), and [`zfc.hn`](https://github.com/amka66/mai/blob/master/src/horn/zfc.hn).
@@ -90,21 +90,21 @@ The following is an account of the files included in the repository.
 
 File | Directory | Description
 ---- | --------- | -----------
-`fol-1.hn` | `src/horn` | A Horn knowledge base (see `<horn_file>` in [here](https://github.com/amka66/horc#how-to-execute)) defining classical first-order logic with equality (FOL) -- both syntax, operations on syntax, and a proof system called natural deduction.
-`fol-2.hn` | `src/horn` | A Horn knowledge base introducing a set of admissible (derived) rules that can be used for proving theorems. Some of these are intended to support the extension of FOL theories with theorems and definitions, per `fol-3.hn` and `fol-4.hn`.
-`fol-3.hn` | `src/horn` | A Horn knowledge base defining a FOL theory (including a subset the language, and axioms) and the proper way to extend theories with theorems and definitions -- in case of a *finite* number of axioms (mathematical expositions of 'type I').
-`fol-4.hn` | `src/horn` | A Horn knowledge base defining the proper way to extend FOL theories with theorems and definitions -- in case of a possibly *infinite* number of axioms (mathematical expositions of 'type II').
-`zfc.hn` | `src/horn` | A Horn knowledge base defining the primitive language and axioms of the Zermelo-Fraenkel set theory with Choice (ZFC). It is a starting point for mathematical expositions of type II (per `fol-4.hn`).
-`zfc-concrete.pl` | `src/prolog` | A Prolog script defining concrete syntax and syntactic sugar for FOL and ZFC, and the conversion to and from abstract syntax.
-`zfc-shell.pl` | `src/prolog` | A Prolog script defining several shell (top-level) functions to support for mathematical expositions of type II (per `fol-4.hn`).
-`set-theory.pl` | `src/prolog/math` | A Prolog script containing a formal mathematical exposition of set theory in `mai`. __TODO__ Work in progress.
+`fol-1.hn` | `src/horn` | Horn knowledge base (see `<horn_file>` in [here](https://github.com/amka66/horc#how-to-execute)) defining classical first-order logic with equality (FOL) -- both syntax, operations on syntax, and a proof system called natural deduction.
+`fol-2.hn` | `src/horn` | Horn knowledge base introducing a set of admissible (derived) rules that can be used for proving theorems. Some of these are intended to support the extension of FOL theories with theorems and definitions, per `fol-3.hn` and `fol-4.hn`.
+`fol-3.hn` | `src/horn` | Horn knowledge base defining a FOL theory (including a subset the language, and axioms) and the proper way to extend theories with theorems and definitions -- in case of a *finite* number of axioms (mathematical expositions of 'type I').
+`fol-4.hn` | `src/horn` | Horn knowledge base defining the proper way to extend FOL theories with theorems and definitions -- in case of a possibly *infinite* number of axioms (mathematical expositions of 'type II').
+`zfc.hn` | `src/horn` | Horn knowledge base defining the primitive language and axioms of the Zermelo-Fraenkel set theory with Choice (ZFC). It is a starting point for mathematical expositions of type II (per `fol-4.hn`).
+`zfc-concrete.pl` | `src/prolog` | Prolog script defining concrete syntax and syntactic sugar for FOL and ZFC, and the conversion to and from abstract syntax.
+`zfc-shell.pl` | `src/prolog` | Prolog script defining several shell (top-level) functions to support for mathematical expositions of type II (per `fol-4.hn`).
+`set-theory.pl` | `src/prolog/math` | Prolog script containing a formal mathematical exposition of set theory in `mai`. __TODO__ Work in progress.
 `run.sh` | `src/bash` | Bash script serving only as interface. Executed first (top) when a Docker container starts, and receiving its parameters from the command line.
 `create-temp-file-and-run-horc.sh` | `src/bash` | Invoked by `run.sh`, this Bash script and assembles everything together. (1) It creates a temporary Prolog script that loads `zfc-shell.pl`, and an optional Prolog script `<prolog_file>`. (2) It invokes `horc` on the knowledge base `zfc.hn` (which loads the other knowledge bases), accompanied by the temporary Prolog script from (1).
 `build-docker.sh`, `run-docker.sh`, `test-docker.sh` | `bin` | Bash utility scripts for developers: building a Docker image, running a Docker image in a container, and testing a Docker image.
 `Dockerfile` | `.` | Docker script for building a Docker image.
-`.dockerignore` | `.` | A list of files to be excluded in Dockerfile's copy command.
-`.gitignore` | `.` | A list of files to be excluded from Git.
-`.gitattributes` | `.` | File extensions with their associated languages.
+`.dockerignore` | `.` | List of files to be excluded in Dockerfile's copy command.
+`.gitignore` | `.` | List of files to be excluded from Git.
+`.gitattributes` | `.` | File extensions and their associated languages.
 `mai.bib` | `.` | BibTeX file containing project's bibliography.
 `LICENSE` | `.` | License file (plain text).
 `README.md` | `.` | This file (Markdown).
