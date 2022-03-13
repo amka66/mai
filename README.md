@@ -1,84 +1,92 @@
-# `mai`: Math Interpreter with Standard Foundations #
+# `mai`: `ma`thematics `i`nterpreter with standard foundations #
 
 ## Abstract ##
 
-A free and open-source tool for [computer-assisted mathematics](https://en.wikipedia.org/wiki/Proof_assistant).
-Building on [__`horc`__](https://github.com/amka66/horc), it allows both verifying and generating formal mathematics.
-`mai` includes a comprehensive coverage of the language of mathematics and its 'standard' foundations; namely, [first-order logic](https://en.wikipedia.org/wiki/First-order_logic) and the [Zermelo–Fraenkel axioms](https://en.wikipedia.org/wiki/Zermelo%E2%80%93Fraenkel_set_theory) of set theory with [Choice](https://en.wikipedia.org/wiki/Axiom_of_choice).
+`mai` is a free and open-source tool for [computer-assisted mathematics](https://en.wikipedia.org/wiki/Proof_assistant).
+It includes a comprehensive coverage of the language of mathematics and its 'standard' foundations; namely, [first-order logic](https://en.wikipedia.org/wiki/First-order_logic) and the [Zermelo–Fraenkel axioms](https://en.wikipedia.org/wiki/Zermelo%E2%80%93Fraenkel_set_theory) of set theory with [Choice](https://en.wikipedia.org/wiki/Axiom_of_choice).
 Syntactic sugar for computer-assisted mathematics is included too.
-To illustrate how `mai` is used in practice, an exposition of set theory is included, with emphasis on building a powerful toolset for the working mathematician (work in progress).
+
+A unique feature of `mai` is its simplicity – its mathematical foundations is implemented as a set of [rules of inference](https://en.wikipedia.org/wiki/Rule_of_inference) in a minimalist logical framework called `horc` (see [here](https://github.com/amka66/horc)).
+This implementation directly parallels textbook definitions of logic and set theory, and thus may serve as a reference definition that may be executed, scrutinized, and used in practice to verify and generate formal proof.
+
+To illustrate how `mai` is used in practice, a formal mathematical exposition of set theory is included, with emphasis on building a powerful toolset for the working mathematician (work in progress). To try it out on any computer preinstalled with [Docker](https://en.wikipedia.org/wiki/Docker_(software)), and have `mai` verify the exposition, write: `docker run --rm amka66/mai set-theory.pl`.
 
 ## Features ##
 
-* A free and open-source [interpreter](https://en.wikipedia.org/wiki/Interpreter_(computing)) for __computer-assisted mathematics__, called `mai`, currently for educational use.
+* Free and open-source [interpreter](https://en.wikipedia.org/wiki/Interpreter_(computing)) for __computer-assisted mathematics__, called `mai`, currently for educational use.
 It includes:
-  * A [shell](https://en.wikipedia.org/wiki/Shell_(computing)) for writing formal mathematical expositions.
-  * The capability of keeping track of theorems and definitions, and verifying their content and structure.
+  * [Shell](https://en.wikipedia.org/wiki/Shell_(computing)) for writing formal mathematics.
+  * The capability of keeping track of theorems and definitions and verifying their validity.
   * Comprehensive coverage of the language of mathematics and its foundations.
 
-* `mai` includes a complete, formal, and *executable* definition of the standard [foundations of mathematics](https://en.wikipedia.org/wiki/Foundations_of_mathematics), including:
+* `mai` includes a formal and *executable* definition of the 'standard' [foundations of mathematics](https://en.wikipedia.org/wiki/Foundations_of_mathematics), including:
   * Classical [first-order logic (FOL)](https://en.wikipedia.org/wiki/First-order_logic) with equality.
-  * A [natural deduction](https://en.wikipedia.org/wiki/Natural_deduction) proof system for first-order logic.
-  * [FOL theories](https://en.wikipedia.org/wiki/Theory_(mathematical_logic)) and their extension by writing [definitions](https://en.wikipedia.org/wiki/Definition) and proving [theorems](https://en.wikipedia.org/wiki/Theorem).
+  * [Natural deduction](https://en.wikipedia.org/wiki/Natural_deduction) proof system for first-order logic, used to verify and generate formal proof.
+  * [FOL theories](https://en.wikipedia.org/wiki/Theory_(mathematical_logic)) and their extension by introducing new [definitions](https://en.wikipedia.org/wiki/Definition) and [theorems](https://en.wikipedia.org/wiki/Theorem).
   * [Zermelo-Fraenkel set theory with Choice (ZFC)](https://en.wikipedia.org/wiki/Zermelo%E2%80%93Fraenkel_set_theory) formalized in first-order logic.
   
-* The foundations of mathematics are expressed and represented in full in [Horn logic](https://en.wikipedia.org/wiki/Horn_clause) (a.k.a., 'pure' [logic programming](https://en.wikipedia.org/wiki/Logic_programming)).
-  * A minimalist meta-formalism for expressing more complex formalisms.
+* These foundations are implemented in their entirety as a set of [rules of inference](https://en.wikipedia.org/wiki/Rule_of_inference) in a minimalist logical framework called `horc` (see [here](https://github.com/amka66/horc)).
+  * This implementation directly parallels textbook definitions of logic and set theory, and thus may serve as an 'official' reference definition of those topics that can be executed, 
+  scrutinized, and used in practice.
 
-* `mai` is packaged within a [Docker](https://en.wikipedia.org/wiki/Docker_(software)) image hosted in [Docker Hub](https://hub.docker.com).
-Therefore, it requires no installation and can be executed with a single command on any computer with Docker (in the first usage, internet connection is needed).
-  * Under the hood, `mai` is implemented using the free and open-source [Horn-clause](https://en.wikipedia.org/wiki/Horn_clause) interpreter `horc` (see [here](https://github.com/amka66/horc)).
-  The latter operates within a [Prolog](https://en.wikipedia.org/wiki/Prolog) environment.
+  * Technically, `horc` is implemented in [Prolog](https://en.wikipedia.org/wiki/Prolog) and operates within the [SWI-Prolog](https://en.wikipedia.org/wiki/SWI-Prolog) ecosystem, and so is `mai`.
 
-* `mai` supports higher layers of automation, via Prolog, without compromising the logic.
+* `mai` is available as a [Docker](https://en.wikipedia.org/wiki/Docker_(software)) image hosted in [Docker Hub](https://hub.docker.com).
+It requires *no* installation and can be downloaded and executed with a single command on any computer preinstalled with Docker.
 
-* Both `horc` and `mai` should be considered educational tools and proof-of-concept (see [here](https://github.com/amka66/horc)).
+* Via Prolog, `mai` supports the implementation of higher layers of automation – namely, proof tactics – without compromising the logic.
 
-## Who is it For? ##
-
-> We invite others who share our vision to join us in making this into an industrial-strength free and open-source framework for computer-assisted mathematics.
-
-## Where to Begin? ##
-
-In order to *use* the `mai` interpreter, an understanding of our implementation of logic and set theory is required. This is essentially the contents of this project.
-Specifically, `mai` is implemented using `horc`, so an understanding of the latter is necessary and sufficient in order to learn all the details of our formalization of mathematics (see [Where to Begin?](https://github.com/amka66/horc#where-to-begin)). The theory and the motivation behind these definitions, in contrast, are covered in standard texts on logic and set theory. A list of resources is included in the following.
-
-Nevertheless, like in common mathematical practice, just a small fragment of this body of knowledge is actually used in practice. This mainly includes concrete syntax for writing formulae (and the conversion functions that accompany it; see `src/prolog/zfc-concrete.pl`), as well as shell functions that represent steps in a formal mathematical exposition (see `src/prolog/zfc-shell.pl`). An example of a mathematical exposition is included in `src/prolog/math/set-theory.pl`.
+* At this point, `mai` should be considered an educational tool and proof-of-concept due to the limited number of proof tactics that are currently implemented.
 
 ## How to Execute? ##
 
-If you have [Docker](https://en.wikipedia.org/wiki/Docker_(software)) on your computer, `mai` can be automatically downloaded and executed with *no* need for local installation (nor cloning the project repository).
-In the command prompt, simply enter the following:
+`mai` can be automatically downloaded and executed with *no* need for local installation (nor cloning the project repository) on any computer preinstalled with [Docker](https://en.wikipedia.org/wiki/Docker_(software)).
+In the command prompt, enter:
 
-```$ docker container run [-it] [--rm] [-v <local_dir>:<container_dir> ...] amka66/mai [<prolog_file>]```
+```$ docker run [-it] [--rm] [-v <local_dir>:<mount_dir>] amka66/mai [<prolog_file>]```
 
 * `<prolog_file>` (optional): Path to a __Prolog script__ file (optionally ending with the extension `.pl`), written in ISO-compliant or SWI-Prolog-compliant Prolog.
-If present, it is to contain a *formal mathematical exposition* in the form of Prolog queries, and possibly other content intended to extend the shell, initialize an interactive Prolog session with the user, etc.
-The path is within the container (consider option `-v` below to access the host machine).
-Included script that can be used here: `set-theory.pl`, containing a formal mathematical exposition of set theory.
+If present, it is to contain a *formal mathematical exposition* in the form of Prolog queries to be verified in `mai`. It may possibly include other content too, intended to extend the shell, initialize an interactive Prolog session with the user, etc.
+The provided path is within the container (consider option `-v` to access the host machine).
+A script included in `mai` that may be used here is `set-theory.pl`, containing a formal mathematical exposition of set theory.
 
-* `-it` (optional): Option for `docker container run`, which, in our case, sets an interactive Prolog session with the user, after loading and executing `<prolog_file>` (if present).
+* `-it` (optional): Option for `docker run`, which, in our case, sets an interactive Prolog session with the user after loading and executing `<prolog_file>` (if present).
 
-* `-v <local_dir>:<container_dir> ...` (optional): Option for `docker container run`, which mounts a local directory (within the host machine) to a specified mount point (directory) within the container.
-The mount point should be used for referring to Prolog scripts in the host machine, as all prescribed paths are within the container. Note that a list of such pairs can be given.
+* `-v <local_dir>:<mount_dir>` (optional): Option for `docker run`, which mounts a local directory `<local_dir>` within the host machine to a specified mount point (a directory) `<mount_dir>` within the container.
+The mount point may be used to refer to Prolog scripts in the host machine.
 
-* `--rm` (optional): Option for `docker container run`, which purges the container once it has stopped running.
-Unless you would like to examine the container after it has stopped, it is safe to use this option and avoid keeping obsolete containers.
+* `--rm` (optional): Option for `docker run`, which purges the container once it has stopped running.
+Unless one would like to examine the container after it has stopped running, it is safe to use this option to purge obsolete containers at once.
 
 ### Examples ###
 
-`$ docker container run --rm amka66/mai set-theory.pl`  
-Load and execute the included Prolog script `set-theory.pl`, containing a formal mathematical exposition of set theory.
+`$ docker run --rm amka66/mai set-theory.pl`  
+Load and execute the included Prolog script `set-theory.pl`, containing a formal mathematical exposition of set theory to be verified with `mai`.
 
-`$ docker container run -it --rm amka66/mai`  
+`$ docker run -it --rm amka66/mai`  
 Start an interactive Prolog session with the user.
 
-`$ docker container run -it --rm -v ~/my-files:/mount amka66/mai /mount/linear-algebra.pl`  
-Load and execute a Prolog script stored locally in `~/my-files/linear-algebra.pl`, and start an interactive Prolog session with the user.
+`$ docker run -it --rm -v ~/myfiles:/mnt amka66/mai /mnt/linear-algebra.pl`  
+Load and execute a Prolog script stored locally in `~/myfiles/linear-algebra.pl`, and then start an interactive Prolog session with the user.
 
-## Overview of Source Code ##
+## Getting Started ##
 
-The following is an account of all files in the repository.
+* Read through [`README.md`](https://github.com/amka66/mai/blob/master/README.md) (this file).
+* Install [Docker](https://en.wikipedia.org/wiki/Docker_(software)) (if missing).
+* To make sure it works, have `mai` verify the included exposition of set theory by executing: `docker run --rm amka66/mai set-theory.pl`.
+* As in common mathematical practice, only a fragment of the mathematical foundations underlying `mai` is typically used in formal mathematical expositions.
+  * To gain working knowledge in `mai`, examine the mathematical exposition of set theory included in [`set-theory.pl`](https://github.com/amka66/mai/blob/master/src/prolog/math/set-theory.pl). The steps in the exposition consist of shell functions (defined in `zfc-shell.pl`) and the arguments of those functions consist of the concrete syntax of logical formulae (defined in `zfc-concrete.pl`).
+  * Read through [`set-theory.pl`](https://github.com/amka66/mai/blob/master/src/prolog/math/set-theory.pl) for the development of powerful set-theoretical tools for the working mathematician (work in progress).
+* For a comprehensive understanding of `mai` and its mathematical foundations start by learning `horc` (see [Where to Begin?](https://github.com/amka66/horc#where-to-begin)). Then:
+  * Read through the definitions of the mathematical foundations of `mai` (implemented in `horc`): [`fol-1.hn`](https://github.com/amka66/mai/blob/master/src/horn/fol-1.hn), [`fol-2.hn`](https://github.com/amka66/mai/blob/master/src/horn/fol-2.hn), [`fol-3.hn`](https://github.com/amka66/mai/blob/master/src/horn/fol-3.hn), [`fol-4.hn`](https://github.com/amka66/mai/blob/master/src/horn/fol-4.hn), and [`zfc.hn`](https://github.com/amka66/mai/blob/master/src/horn/zfc.hn).
+  * Read through the definitions of the shell and the concrete syntax (implemented in Prolog): [`zfc-shell.pl`](https://github.com/amka66/mai/blob/master/src/prolog/zfc-shell.pl) and [`zfc-concrete.pl`](https://github.com/amka66/mai/blob/master/src/prolog/zfc-concrete.pl).
+  * The theory and the motivation behind these definitions are covered in standard texts on logic and axiomatic set theory (see [Additional Resources](https://github.com/amka66/mai#additional-resources)).
+
+## Overview of Source Code (for developers) ##
+
+> We invite those who share our vision to join us in making this into an industrial-strength free and open-source framework for computer-assisted mathematics.
+
+The following is an account of the files included in the repository.
 
 File | Directory | Description
 ---- | --------- | -----------
@@ -101,11 +109,9 @@ File | Directory | Description
 `LICENSE` | `.` | License file (plain text).
 `README.md` | `.` | This file (Markdown).
 
-## List of Resources ##
+## Additional Resources ##
 
-* The `horc` project (see [here](https://github.com/amka66/horc#how-to-execute)) is our formal foundations.
-
-* As a first resource on the theory of first-order logic (excluding our natural deduction proof system), which we find understandable and highly aligned with our approach, we may suggest Enderton's classic text:
+* As a first reference on the theory of first-order logic (excluding our natural deduction proof system), which we find understandable and highly aligned with our approach, we may suggest Enderton's classic text:
 [Enderton, Herbert B. A Mathematical Introduction to Logic. Academic Press, 2nd edition, 2001.](https://books.google.com/books?hl=en&lr=&id=dVncCl_EtUkC&oi=fnd&pg=PP2&dq=related:XDnmIaLEU1MJ:scholar.google.com)
 Another introductory text on first-order logic, which is slightly more verbose at parts, and adopts natural deduction as its proof system, is the following:
 [Van Dalen, Dirk. Logic and Structure. Springer, 5th edition, 2013.](https://books.google.com/books?hl=en&lr=&id=u0wlXPHATDcC&oi=fnd&pg=PR3)
@@ -114,18 +120,18 @@ Another introductory text on first-order logic, which is slightly more verbose a
 [Pfenning, Frank. "Automated Theorem Proving." Material for the course Automated Theorem Proving at Carnegie Mellon University, Fall 1999, revised Spring 2004.](https://www.cs.cmu.edu/afs/.cs.cmu.edu/Web/People/fp/courses/atp/handouts/atp.pdf)
 Equality predicate is introduced in Section 7.1.
 
-* As a first resource on the Zermelo-Fraenkel set theory with Choice, which introduces a set of axioms that are similar to ours, and also develops set theory to express common mathematical concepts, we may suggest:
+* As a first reference on the Zermelo-Fraenkel set theory with Choice, which introduces a set of axioms that are similar to ours, and also develops set theory to express common mathematical concepts, we may suggest:
 [Enderton, Herbert B. Elements of Set Theory. Academic press, 1977.](https://books.google.com/books?hl=en&lr=&id=JlR-Ehk35XkC&oi=fnd&pg=PP1&dq=related:IypakaTDiLwJ:scholar.google.com)
 
-__TODO__ Add more resources (perhaps also elaborate on the existing ones), and compare to Anthony Morse's theory of sets, Metamath project, and Isabelle/ZF.
+<!-- __TODO__ Add more resources (perhaps also elaborate on the existing ones), and compare to Anthony Morse's theory of sets, Metamath project, Isabelle/ZF, and Lean. -->
 
-__NOTE__ More info about `mai` and the included material may be found in commit `057ca678a1`, directory `doc`.
+<!-- __NOTE__ More info about `mai` and the included material may be found in commit `057ca678a1`, directory `doc`. -->
 
-__TODO__ Add a short paper to arXiv, and include a BibTeX entry for citation.
+<!-- __TODO__ Add a short paper to arXiv, and include a BibTeX entry for citation. -->
 
 ## License ##
 
-Copyright 2020 Amir Kantor
+Copyright 2020–2022 Amir Kantor
 
 Licensed under the Apache License, Version 2.0  -- see `LICENSE.txt`.
 
