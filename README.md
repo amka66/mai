@@ -34,9 +34,9 @@ It includes:
 * `mai` is available as a [Docker](https://en.wikipedia.org/wiki/Docker_(software)) image hosted in [Docker Hub](https://hub.docker.com).
 It requires *no* installation and can be downloaded and executed with a single command on any computer preinstalled with Docker.
 
-* Via Prolog, `mai` supports the implementation of higher layers of automation – namely, proof tactics – without compromising the logic.
+* Via Prolog, `mai` supports the implementation of higher layers of automation – namely, proof tactics – aimed to speed up proof search without compromising the logic.
 
-* At this point, `mai` should be considered an educational tool and proof-of-concept due to the limited number of proof tactics that are currently implemented.
+* At this point, `mai` should be considered an educational tool and proof-of-concept due to the limited number of tactics that are currently implemented.
 
 ## How to Execute? ##
 
