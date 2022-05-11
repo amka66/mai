@@ -6,7 +6,7 @@
 It includes a comprehensive coverage of the language of mathematics and its 'standard' foundations; namely, [first-order logic](https://en.wikipedia.org/wiki/First-order_logic) and the [Zermelo–Fraenkel axioms](https://en.wikipedia.org/wiki/Zermelo%E2%80%93Fraenkel_set_theory) of set theory with [Choice](https://en.wikipedia.org/wiki/Axiom_of_choice).
 Syntactic sugar for computer-assisted mathematics is included too.
 
-A unique feature of `mai` is its simplicity – its mathematical foundations are implemented as a set of [rules of inference](https://en.wikipedia.org/wiki/Rule_of_inference) in a minimalist logical framework called `horc` (see [here](https://github.com/amka66/horc)).
+A unique feature of `mai` is its simplicity – its entire foundations are implemented as a set of [rules of inference](https://en.wikipedia.org/wiki/Rule_of_inference) in a minimalist logical framework called `horc` (see [here](https://github.com/amka66/horc)).
 This implementation directly parallels textbook definitions of logic and set theory. Therefore, it may accompany other learning materials on these topics, and may serve as a reference definition that can be executed, scrutinized, and used in practice to verify and generate formal proof.
 
 To illustrate how `mai` is used, a formal mathematical exposition of set theory is included, with emphasis on building a powerful toolset for the working mathematician (work in progress). To try it out on any computer preinstalled with [Docker](https://en.wikipedia.org/wiki/Docker_(software)), run: `docker run --rm amka66/mai set-theory.pl`.
