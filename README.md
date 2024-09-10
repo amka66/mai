@@ -9,7 +9,7 @@ The implementation spans all elements of the language and may particularly serve
 
 A unique feature of `mai` is its simplicity – its entire foundations are implemented as a set of [rules of inference](https://en.wikipedia.org/wiki/Rule_of_inference) in the minimalist meta-language `horc` (see [here](https://github.com/amka66/horc)).
 This implementation directly parallels textbook definitions of the 'standard' foundations of mathematics including first-order logic and set theory.
-Accordingly, `mai` may accompany courses in logic and set theory, and may serve as a reference definition that can be executed, scrutinized, and experimented with.
+Accordingly, `mai` may accompany courses in logic and set theory, and may serve as a reference implementation that can be executed, scrutinized, and experimented with.
 
 To illustrate how `mai` can be used, a formal mathematical exposition of set theory is included, with emphasis on building a powerful toolset for the working mathematician (work in progress). It is very easy to try `mai` and examine the foundations of mathematics on any computer preinstalled with [Docker](https://en.wikipedia.org/wiki/Docker_(software)), by running:
 ```
