@@ -2,14 +2,19 @@
 
 ## Abstract ##
 
-`mai` is a free and open-source tool for [computer-assisted mathematics](https://en.wikipedia.org/wiki/Proof_assistant).
-It includes a comprehensive coverage of the language of mathematics and its 'standard' foundations; namely, [first-order logic](https://en.wikipedia.org/wiki/First-order_logic) and the [Zermelo–Fraenkel axioms](https://en.wikipedia.org/wiki/Zermelo%E2%80%93Fraenkel_set_theory) of set theory with [Choice](https://en.wikipedia.org/wiki/Axiom_of_choice).
-Syntactic sugar for computer-assisted mathematics is included too.
+`mai` is an educational tool for [computer-assisted mathematics](https://en.wikipedia.org/wiki/Proof_assistant).
+In this repository, the language of mathematics is defined from first principles.
+Using `horc` (see [here](https://github.com/amka66/horc)), a fully operational implementation of the language is obtained at no additional cost.
+The implementation spans all elements of the language and may particularly serve as a language parser and a proof assistant.
 
-A unique feature of `mai` is its simplicity – its entire foundations are implemented as a set of [rules of inference](https://en.wikipedia.org/wiki/Rule_of_inference) in a minimalist logical framework called `horc` (see [here](https://github.com/amka66/horc)).
-This implementation directly parallels textbook definitions of logic and set theory. Therefore, it may accompany other learning materials on these topics, and may serve as a reference definition that can be executed, scrutinized, and used in practice to verify and generate formal proof.
+A unique feature of `mai` is its simplicity – its entire foundations are implemented as a set of [rules of inference](https://en.wikipedia.org/wiki/Rule_of_inference) in the minimalist meta-language `horc` (see [here](https://github.com/amka66/horc)).
+This implementation directly parallels textbook definitions of the 'standard' foundations of mathematics including first-order logic and set theory.
+Accordingly, `mai` may accompany courses in logic and set theory, and may serve as a reference definition that can be executed, scrutinized, and experimented with.
 
-To illustrate how `mai` is used, a formal mathematical exposition of set theory is included, with emphasis on building a powerful toolset for the working mathematician (work in progress). To try it out on any computer preinstalled with [Docker](https://en.wikipedia.org/wiki/Docker_(software)), run: `docker run --rm amka66/mai set-theory.pl`.
+To illustrate how `mai` can be used, a formal mathematical exposition of set theory is included, with emphasis on building a powerful toolset for the working mathematician (work in progress). It is very easy to try `mai` and examine the foundations of mathematics on any computer preinstalled with [Docker](https://en.wikipedia.org/wiki/Docker_(software)), by running:
+```
+docker run --rm amka66/mai set-theory.pl
+```
 
 ## Features ##
 
