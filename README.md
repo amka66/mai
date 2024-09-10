@@ -1,4 +1,4 @@
-# `mai`: `ma`th `i`nterpreter with standard foundations #
+# `mai`: `MA`th `I`nterpreter with Standard Foundations #
 
 ## Abstract ##
 
