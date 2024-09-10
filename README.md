@@ -4,7 +4,7 @@
 
 `mai` is an educational tool for [computer-assisted mathematics](https://en.wikipedia.org/wiki/Proof_assistant).
 In this repository, the language of mathematics is defined from first principles.
-Using `horc` (see [here](https://github.com/amka66/horc)), a fully operational implementation of the language is obtained at no additional cost.
+Using `horc` (see [here](https://github.com/amka66/horc)), a fully operational implementation of the language of mathematics is obtained at no additional cost.
 The implementation spans all elements of the language and may particularly serve as a language parser and a proof assistant.
 
 A unique feature of `mai` is its simplicity – its entire foundations are implemented as a set of [rules of inference](https://en.wikipedia.org/wiki/Rule_of_inference) in the minimalist meta-language `horc` (see [here](https://github.com/amka66/horc)).
